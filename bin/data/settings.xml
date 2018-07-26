@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <settings>
-	<Threshold>0</Threshold>
+	<Threshold>5.75643</Threshold>
 	<Track_Hue_Saturation>0</Track_Hue_Saturation>
+	<black_white_threshold>0</black_white_threshold>
 </settings>

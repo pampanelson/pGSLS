@@ -5,6 +5,8 @@
 #include "ofxCv.h"
 //#include "ofxFlowTools.h"
 #include "MyFlowTools.h"
+#include "ofxFft.h"
+
 
 class ofApp : public ofBaseApp{
 	
@@ -12,7 +14,8 @@ public:
 	void setup();
 	void update();
 	void draw();
-	
+	void exit();
+
 	// Camera
 	ofVideoGrabber		simpleCam;
 	bool				didCamUpdate;
@@ -23,6 +26,7 @@ public:
 	// opencv
 	ofxCv::ContourFinder 	contourFinder;
 	ofColor 				targetColor;
+	ofImage					grayImg;
 	
 	// Time
 	float				lastTime;
@@ -45,6 +49,22 @@ public:
 	ofFbo               flowFbo;
 	ofFbo               obsticleFbo;
 	
+	// sound
+	
+	void 				audioIn(ofSoundBuffer &inBuffer);
+	//	void				audioIn(float *input, int bufferSize, int nChannels);
+	ofSoundStream 		soundStream;
+	ofSoundBuffer 		audioInSoundBuffer;
+	ofSoundBuffer		chennalBuffer;
+	ofxFft* 			fft;
+
+	
+	float 				rms;
+	float 				power;
+	
+	vector <float> 		left;
+	vector <float> 		right;
+	
 	
 	
 	// test
@@ -58,8 +78,8 @@ public:
 	ofxPanel			gui;
 	ofParameter<float> 	threshold;
 	ofParameter<bool> 	trackHs;
-	
-	
+	ofParameter<int>	blackWhiteThreshold;
+
 	
 	
 	
