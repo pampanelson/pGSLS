@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "ofxGui.h"
+#include "ofxCv.h"
 //#include "ofxFlowTools.h"
 #include "MyFlowTools.h"
 
@@ -17,6 +18,11 @@ public:
 	bool				didCamUpdate;
 	ftFbo				cameraFbo;
 	ofParameter<bool>	doFlipCamera;
+	
+	
+	// opencv
+	ofxCv::ContourFinder 	contourFinder;
+	ofColor 				targetColor;
 	
 	// Time
 	float				lastTime;
@@ -44,11 +50,19 @@ public:
 	// test
 	
 	ofImage				imgTest1;
+	ofImage				imgTest3;
 	bool				drawTestImage = false;
 	bool				drawBackImg = true;
 	
 	
 	ofxPanel			gui;
+	ofParameter<float> 	threshold;
+	ofParameter<bool> 	trackHs;
+	
+	
+	
+	
+	
 	
 	
 	void keyPressed(int key);

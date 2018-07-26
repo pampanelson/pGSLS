@@ -1,2 +1,5 @@
 <?xml version="1.0"?>
-<settings />
+<settings>
+	<Threshold>0</Threshold>
+	<Track_Hue_Saturation>0</Track_Hue_Saturation>
+</settings>
