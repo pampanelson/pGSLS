@@ -11,7 +11,7 @@ void ofApp::setup(){
 	fbo.allocate(ofGetWindowWidth(),ofGetWindowHeight(),GL_RGBA);
 	
 	
-	imgTest1.load("test1.png");
+	imgTest1.load("test-2.jpg");
 	
 	
 	
@@ -67,6 +67,11 @@ void ofApp::update(){
 		//		}
 		
 		
+		if(drawTestImage){
+			imgTest1.draw(0, sin(ofGetElapsedTimeMillis()));
+		}
+		
+		
 		
 		flowFbo.end();
 		ofPopStyle();
@@ -84,6 +89,10 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+	
+	if(drawBackImg){
+		imgTest1.draw(0,0);
+	}
 	fbo.begin();
 	ofClear(0, 0, 0);
 	myFlowTools.draw();
@@ -110,12 +119,25 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-	
+	switch(key){
+		case 'd':
+			drawTestImage = true;
+			drawBackImg = false;
+			break;
+		default:
+			break;
+	}
 }
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
-	
+	switch(key){
+		case 'e':
+			drawTestImage = false;
+			break;
+		default:
+			break;
+	}
 }
 
 //--------------------------------------------------------------

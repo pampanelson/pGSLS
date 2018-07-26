@@ -36,10 +36,16 @@ public:
 	ofPixels			fboPixels;
 	ofImage				fboImg;
 	
-	ofImage				imgTest1;
 	ofFbo               flowFbo;
 	ofFbo               obsticleFbo;
 	
+	
+	
+	// test
+	
+	ofImage				imgTest1;
+	bool				drawTestImage = false;
+	bool				drawBackImg = true;
 	
 	
 	ofxPanel			gui;
