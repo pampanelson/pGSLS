@@ -8,6 +8,37 @@
 #include "ofxFft.h"
 
 
+
+class Scheduler : public ofThread {
+public:
+	unsigned long counterSec = 0;
+	unsigned long counterMil = 0;
+	Scheduler() {
+//		timerSec.setPeriodicEvent(1000000000); // 1 second
+		timerMil.setPeriodicEvent(1000000); // 1 mil second
+		startThread();
+	}
+private:
+//	ofTimer timerSec;
+	ofTimer timerMil;
+	void threadedFunction() {
+		while (isThreadRunning()) {
+			timerMil.waitNext();
+			counterMil++;
+			
+			if(counterMil % 1000 == 0){
+				counterSec++;
+			}
+			
+		}
+		
+	}
+};
+
+
+
+
+
 class ofApp : public ofBaseApp{
 	
 public:
@@ -16,6 +47,10 @@ public:
 	void draw();
 	void exit();
 
+	
+	Scheduler               myTimer;
+
+	
 	// Camera
 	ofVideoGrabber		simpleCam;
 	bool				didCamUpdate;

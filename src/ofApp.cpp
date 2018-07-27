@@ -123,7 +123,8 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::update(){
 
-	
+	cout << "sec " << myTimer.counterSec << endl;
+	cout << "mil sec " << myTimer.counterMil << endl;
 	// first handle on image
 	
 //	ofImage		tmpGrayImg;
@@ -248,6 +249,7 @@ void ofApp::exit(){
 	ofSoundStreamStop();
 	//	powerThresholdSlider.removeListener(this, &ofApp::powerThresholdChanged);
 	
+	myTimer.stopThread();
 }
 
 
