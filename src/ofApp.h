@@ -57,7 +57,7 @@ public:
 	ofSoundBuffer 		audioInSoundBuffer;
 	ofSoundBuffer		chennalBuffer;
 	ofxFft* 			fft;
-
+	float * 			fftData;
 	
 	float 				rms;
 	float 				power;

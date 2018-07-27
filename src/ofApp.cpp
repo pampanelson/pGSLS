@@ -71,6 +71,9 @@ void ofApp::setup(){
 	chennalBuffer.allocate(bufferSize, 1);
 	fft = ofxFft::create(bufferSize, OF_FFT_WINDOW_HAMMING);
 	
+	// fft bin size = bufferSize / 2 + 1 ++++++++++++++++++++++
+//	cout << fft->getBinSize() << endl;
+	
 	
 	
 	
@@ -190,12 +193,18 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 	
-	ofSetColor(255,0,0,255);
-	ofDrawRectangle(10, 10, 1000 * power, 20);
 	ofSetColor(0,255,0,255);
 	ofDrawRectangle(10, 35, 100 * rms, 20);
 	
-	
+	if(fftData){
+		int fftBinScale = 500;
+		int fftBinWidth = 10;
+		for (int i = 0; i < fft->getBinSize(); i++) {
+			ofDrawRectangle(fftBinWidth * i, 50, fftBinWidth, fftData[i] * fftBinScale);
+		}
+		
+	}
+
 	
 	//	if(drawBackImg){
 	//		imgTest1.draw(0,0);
@@ -268,6 +277,12 @@ void ofApp::audioIn(ofSoundBuffer & input){
 	curVol = sqrt( curVol );
 	
 	rms = curVol;
+	
+	input.getChannel(chennalBuffer, 0);
+	fft->setSignal(chennalBuffer.getBuffer().data());
+	float* curFft = fft->getAmplitude();
+	
+	fftData = curFft;
 	
 }
 
