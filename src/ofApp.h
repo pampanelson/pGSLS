@@ -63,6 +63,10 @@ public:
 	ofColor 				targetColor;
 	ofImage					grayImg;
 	
+	// for debug contour =======================
+	
+	int					contourIndex = -1;
+	
 	// Time
 	float				lastTime;
 	float				deltaTime;

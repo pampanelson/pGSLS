@@ -123,8 +123,6 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::update(){
 
-	cout << "sec " << myTimer.counterSec << endl;
-	cout << "mil sec " << myTimer.counterMil << endl;
 	// first handle on image
 	
 //	ofImage		tmpGrayImg;
@@ -157,6 +155,8 @@ void ofApp::update(){
 	contourFinder.setTargetColor(targetColor, trackHs ? TRACK_COLOR_HS : TRACK_COLOR_RGB);
 	contourFinder.setThreshold(threshold);
 	contourFinder.findContours(imgTest3);
+	
+
 	
 	
 	//	simpleCam.update();
@@ -194,20 +194,22 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 	
-	int yPos = 500;
-
-	if(fftData){
-		int fftBinScale = 500;
-		int fftBinWidth = 2;
-		for (int i = 0; i < fft->getBinSize(); i++) {
-			ofDrawRectangle(fftBinWidth * i, yPos, fftBinWidth, - 1 * fftData[i] * fftBinScale);
-		}
-		
-	}
-	int rmsScale = 500;
-	ofSetColor(0,255,0,255);
-	ofDrawRectangle(10, yPos + 10, rmsScale * rms, 20);
 	
+	// audio analyse debug ===========================
+//	int yPos = 500;
+//
+//	if(fftData){
+//		int fftBinScale = 500;
+//		int fftBinWidth = 2;
+//		for (int i = 0; i < fft->getBinSize(); i++) {
+//			ofDrawRectangle(fftBinWidth * i, yPos, fftBinWidth, - 1 * fftData[i] * fftBinScale);
+//		}
+//
+//	}
+//	int rmsScale = 500;
+//	ofSetColor(0,255,0,255);
+//	ofDrawRectangle(10, yPos + 10, rmsScale * rms, 20);
+//
 
 	
 	//	if(drawBackImg){
@@ -234,8 +236,69 @@ void ofApp::draw(){
 	
 	
 //		imgTest3.draw(0, 0);
+	
+	ofPixels tmpPixels = imgTest3.getPixels();
+	
+	if(contourIndex >= 0 & contourIndex < contourFinder.getContours().size()){
+		
+		
+		for (int i = 0; i < contourFinder.getContours().size(); i++) {
+			if(i <= contourIndex){
+				
+				// draw contour finder points only ================
+				//				std::vector<cv::Point> points = contourFinder.getContour(i);
+				
+				//				for (int j = 0; j < points.size(); j++) {
+				//					cv::Point point = points[j];
+				//					tmpPixels.setColor(point.x, point.y, ofColor(255,0,0));
+				//				}
+				
+				
+				
+				
+				
+				
+				
+				// draw all point red inside a polyline
+				ofPolyline polyLine = contourFinder.getPolyline(i);
+
+				for (int j = 0; j < tmpPixels.getWidth(); j++) {
+					for (int k = 0; k < tmpPixels.getHeight(); k++) {
+						cv::Point p = cv::Point(j,k);
+						if(polyLine.inside(j, k)){
+							tmpPixels.setColor(j,k, ofColor(255,0,0));
+						}
+
+					}
+				}
+				
+				
+				
+				// =================================
+				
+				
+			}
+		}// end iterate contourfinder
+		
+	}// end check contourIndex
+	
+	
+	
+	
+	ofImage tmpImg;
+	tmpImg.setFromPixels(tmpPixels);
+	tmpImg.draw(0, 0);
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	// opencv
-	contourFinder.draw();
+//	contourFinder.draw();
 	
 	gui.draw();
 	
@@ -298,6 +361,11 @@ void ofApp::keyPressed(int key){
 		case 'd':
 			drawTestImage = true;
 			drawBackImg = false;
+			break;
+			
+		// for debug test only ==================
+		case 'c':
+			contourIndex += 1;
 			break;
 		default:
 			break;
