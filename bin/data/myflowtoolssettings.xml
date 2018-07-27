@@ -4,7 +4,7 @@
 	<draw_mode>1</draw_mode>
 	<MODE>draw name</MODE>
 	<particle_flow>
-		<active>1</active>
+		<active>0</active>
 		<particle_color>0, 0, 0, 255</particle_color>
 		<speed>20</speed>
 		<cell_size>1.25</cell_size>
@@ -33,12 +33,12 @@
 	</optical_flow>
 	<fluid_solver>
 		<reset>0</reset>
-		<speed>20</speed>
+		<speed>70</speed>
 		<cell_size>1.25</cell_size>
 		<iterations>40</iterations>
 		<viscosity>0.1</viscosity>
 		<vorticity>0.6</vorticity>
-		<dissipation>0.002</dissipation>
+		<dissipation>0.1</dissipation>
 		<advanced_dissipation>
 			<velocity_offset>-0.001</velocity_offset>
 			<density_offset>0</density_offset>
@@ -48,7 +48,7 @@
 			<sigma>0.05</sigma>
 			<weight>0.05</weight>
 			<ambient_temperature>0</ambient_temperature>
-			<gravity>0, 9.80665</gravity>
+			<gravity>0, -9.80665</gravity>
 		</smoke_buoyancy>
 		<maximum>
 			<clampForce>0.05</clampForce>

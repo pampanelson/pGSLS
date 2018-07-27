@@ -114,6 +114,10 @@ public:
 	bool				drawBackImg = true;
 	vector<vector<cv::Point>>  contourBlobs;
 	vector<ofImage>		vecContourBlobImagesForFlow;
+	int					drawImageForFlowMilSecs = 1000;
+	int					deltaSpeedFactor = 20;// how fast a contour blob move for make flow,smaller is quicker
+	vector<int>			vecDrawImageForFlowOnce;
+	
 	
 	
 	ofxPanel			gui;

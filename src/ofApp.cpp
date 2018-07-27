@@ -8,9 +8,13 @@ using namespace cv;
 void ofApp::setup(){
 	ofSetFrameRate(30);
 	ofSetVerticalSync(true);
+	
+	// gray background for debug
+	//	ofSetBackgroundColor(128, 128, 128);
+	
+	
 	// white background color
-	ofSetBackgroundColor(128, 128, 128);
-	//	ofSetBackgroundColor(255, 255, 255);
+	ofSetBackgroundColor(255, 255, 255);
 	
 	fbo.allocate(ofGetWindowWidth(),ofGetWindowHeight(),GL_RGBA);
 	
@@ -115,6 +119,10 @@ void ofApp::setup(){
 	gui.loadFromFile("settings.xml");
 	
 	
+	// opencv analyse once for convinient ===================
+	contourFinder.setTargetColor(targetColor, trackHs ? TRACK_COLOR_HS : TRACK_COLOR_RGB);
+	contourFinder.setThreshold(threshold);
+	contourFinder.findContours(imgTest3);
 	
 	
 	
@@ -152,10 +160,10 @@ void ofApp::update(){
 	
 	
 	// opencv
-	contourFinder.setTargetColor(targetColor, trackHs ? TRACK_COLOR_HS : TRACK_COLOR_RGB);
-	contourFinder.setThreshold(threshold);
-	contourFinder.findContours(imgTest3);
-	
+	//	contourFinder.setTargetColor(targetColor, trackHs ? TRACK_COLOR_HS : TRACK_COLOR_RGB);
+	//	contourFinder.setThreshold(threshold);
+	//	contourFinder.findContours(imgTest3);
+	//
 	
 	
 	
@@ -174,20 +182,35 @@ void ofApp::update(){
 	
 	// flow tools =====================================
 	
-	//	ofPushStyle();
-	//	ofEnableBlendMode(OF_BLENDMODE_DISABLED);
-	//	flowFbo.begin();
+	ofPushStyle();
+	ofEnableBlendMode(OF_BLENDMODE_DISABLED);
+	flowFbo.begin();
+	
+	//		if(drawTestImage){
+	//			imgTest1.draw(0, sin(ofGetElapsedTimeMillis()));
+	//		}
 	//
-	//	if(drawTestImage){
-	//		imgTest1.draw(0, sin(ofGetElapsedTimeMillis()));
-	//	}
-	//
-	//
-	//
-	//	flowFbo.end();
-	//	ofPopStyle();
-	//
-	//	myFlowTools.update(&flowFbo,&obsticleFbo);
+	
+	
+	// debug draw each contour blob for a certain time
+	if(contourIndex >= 0 & contourIndex < vecContourBlobImagesForFlow.size()){
+		
+		int timeStamp = myTimer.counterMil;
+		if(vecDrawImageForFlowOnce[contourIndex] == 0){
+			vecDrawImageForFlowOnce[contourIndex] = timeStamp;
+			
+		}
+		int delta = timeStamp - vecDrawImageForFlowOnce[contourIndex];
+		if(delta < drawImageForFlowMilSecs){
+			vecContourBlobImagesForFlow[contourIndex].draw(0,-1 * delta / deltaSpeedFactor);
+		}
+	}
+	
+	
+	flowFbo.end();
+	ofPopStyle();
+	
+	myFlowTools.update(&flowFbo,&obsticleFbo);
 	
 }
 
@@ -212,59 +235,67 @@ void ofApp::draw(){
 	//
 	
 	
+	
+	
+	
 	//	if(drawBackImg){
 	//		imgTest1.draw(0,0);
 	//	}
-	//	fbo.begin();
-	//	ofClear(0, 0, 0);
-	//	myFlowTools.draw();
-	//	fbo.end();
-	//
-	//	fbo.readToPixels(fboPixels);
-	//	for (int i = 0; i < fboPixels.getWidth(); i++) {
-	//		for (int j = 0; j < fboPixels.getHeight(); j++) {
-	//			ofColor color = fboPixels.getColor(i, j);
-	//			if(color[0] > 0){
-	//				fboPixels.setColor(i, j,ofColor(0,0,0,color[3]));
-	//
-	//			}
-	//		}
-	//	}
-	//
-	//	fboImg.setFromPixels(fboPixels);
-	//	fboImg.draw(0, 0);
+	
+	// draw image below flow
+	//  draw current contourindex contour blobs white
+	
+	ofPixels tmpPixels = imgTest3.getPixels();
+	if(contourIndex >= 0 & contourIndex <= contourFinder.getContours().size()){
+		
+		
+		// thread out error ======================  TODO 
+		for (int k = 0; k <= contourIndex; k++) {
+			if(contourBlobs[k].size() > 0){
+				for (int j = 0; j < contourBlobs[k].size(); j++) {
+					
+					tmpPixels.setColor(contourBlobs[k][j].x, contourBlobs[k][j].y, ofColor(255,255,255));
+					
+				}
+			}
+			
+			
+		}
+		
+		
+	}
+	
+	ofImage tmpImg;
+	tmpImg.setFromPixels(tmpPixels);
+	tmpImg.draw(0, 0);
 	
 	
-	//		imgTest3.draw(0, 0);
 	
 	
-	//  draw contour blobs ============================
-//	ofPixels tmpPixels = imgTest3.getPixels();
-//
-//	if(contourIndex >= 0 & contourIndex <= contourFinder.getContours().size()){
-//		for (int j = 0; j < contourIndex; j++) {
-//			for (int k = 0; k < contourBlobs[j].size(); k++) {
-//				tmpPixels.setColor(contourBlobs[j][k].x, contourBlobs[j][k].y, ofColor(255,0,0));
-//			}
-//		}
-//
-//	}
-//
-//
-//
-//	ofImage tmpImg;
-//	tmpImg.setFromPixels(tmpPixels);
-//	tmpImg.draw(0, 0);
-//
 	
 	
-	for (int i = 0; i < contourIndex; i++) {
-		if(i < vecContourBlobImagesForFlow.size()){
-			vecContourBlobImagesForFlow[i].draw(0, 0);
+	// draw flow ============================================
+	fbo.begin();
+	ofClear(0, 0, 0);
+	myFlowTools.draw();
+	fbo.end();
+	
+	fbo.readToPixels(fboPixels);
+	for (int i = 0; i < fboPixels.getWidth(); i++) {
+		for (int j = 0; j < fboPixels.getHeight(); j++) {
+			ofColor color = fboPixels.getColor(i, j);
+			if(color[0] > 0){
+				fboPixels.setColor(i, j,ofColor(0,0,0,color[3]));
+				
+			}
 		}
 	}
 	
+	fboImg.setFromPixels(fboPixels);
+	fboImg.draw(0, 0);
 	
+	
+	//		imgTest3.draw(0, 0);
 	
 	
 	
@@ -338,8 +369,16 @@ void ofApp::keyPressed(int key){
 		case 'c':
 			if(contourIndex > contourFinder.getContours().size() + 1){
 				contourIndex = -1;
+				
+				// reset draw timestamp
+				for (int i = 0; i < vecDrawImageForFlowOnce.size(); i++) {
+					vecDrawImageForFlowOnce[i] = 0;
+				}
+				
+				
 			}
 			contourIndex += 1;
+			
 			break;
 			
 			
@@ -393,10 +432,12 @@ void ofApp::keyPressed(int key){
 				pixels.allocate(imgTest3.getWidth(), imgTest3.getHeight(), 1);
 				pixels.setImageType(OF_IMAGE_GRAYSCALE);
 				
+				// draw all white background
 				for (int i = 0; i < pixels.size(); i++) {
 					pixels.setColor(i,ofColor(255));
 				}
 				
+				// draw black point for contour blob
 				for (int i = 0; i < curBlob.size(); i++) {
 					
 					pixels.setColor(curBlob[i].x, curBlob[i].y, ofColor(0));
@@ -405,6 +446,13 @@ void ofApp::keyPressed(int key){
 				img.setFromPixels(pixels);
 				
 				vecContourBlobImagesForFlow.push_back(img);
+				
+				
+				// draw once mark for this contour blob
+				// if == 0 , not draw yet
+				// else keep the timestamp of drawing
+				// and stop draw after 1000 mil later
+				vecDrawImageForFlowOnce.push_back(0);
 				
 				
 			}// end iterate contourfinder
