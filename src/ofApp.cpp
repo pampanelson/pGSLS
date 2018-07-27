@@ -237,26 +237,32 @@ void ofApp::draw(){
 	
 	//		imgTest3.draw(0, 0);
 	
-	ofPixels tmpPixels = imgTest3.getPixels();
 	
-	if(contourIndex >= 0 & contourIndex <= contourFinder.getContours().size()){
-		for (int j = 0; j < contourIndex; j++) {
-			for (int k = 0; k < contourBlobs[j].size(); k++) {
-				tmpPixels.setColor(contourBlobs[j][k].x, contourBlobs[j][k].y, ofColor(255,0,0));
-			}
+	//  draw contour blobs ============================
+//	ofPixels tmpPixels = imgTest3.getPixels();
+//
+//	if(contourIndex >= 0 & contourIndex <= contourFinder.getContours().size()){
+//		for (int j = 0; j < contourIndex; j++) {
+//			for (int k = 0; k < contourBlobs[j].size(); k++) {
+//				tmpPixels.setColor(contourBlobs[j][k].x, contourBlobs[j][k].y, ofColor(255,0,0));
+//			}
+//		}
+//
+//	}
+//
+//
+//
+//	ofImage tmpImg;
+//	tmpImg.setFromPixels(tmpPixels);
+//	tmpImg.draw(0, 0);
+//
+	
+	
+	for (int i = 0; i < contourIndex; i++) {
+		if(i < vecContourBlobImagesForFlow.size()){
+			vecContourBlobImagesForFlow[i].draw(0, 0);
 		}
-		
 	}
-
-	
-	
-	ofImage tmpImg;
-	tmpImg.setFromPixels(tmpPixels);
-	tmpImg.draw(0, 0);
-	
-	
-	
-	
 	
 	
 	
@@ -379,6 +385,26 @@ void ofApp::keyPressed(int key){
 				
 				contourBlobs.push_back(curBlob);
 				
+				
+				// make a image with blob points and collect
+				ofImage img;
+				img.allocate(imgTest3.getWidth(), imgTest3.getHeight(), OF_IMAGE_GRAYSCALE);
+				ofPixels pixels;
+				pixels.allocate(imgTest3.getWidth(), imgTest3.getHeight(), 1);
+				pixels.setImageType(OF_IMAGE_GRAYSCALE);
+				
+				for (int i = 0; i < pixels.size(); i++) {
+					pixels.setColor(i,ofColor(255));
+				}
+				
+				for (int i = 0; i < curBlob.size(); i++) {
+					
+					pixels.setColor(curBlob[i].x, curBlob[i].y, ofColor(0));
+				}
+				
+				img.setFromPixels(pixels);
+				
+				vecContourBlobImagesForFlow.push_back(img);
 				
 				
 			}// end iterate contourfinder

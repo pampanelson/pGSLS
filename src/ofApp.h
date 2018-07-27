@@ -113,6 +113,8 @@ public:
 	bool				drawTestImage = false;
 	bool				drawBackImg = true;
 	vector<vector<cv::Point>>  contourBlobs;
+	vector<ofImage>		vecContourBlobImagesForFlow;
+	
 	
 	ofxPanel			gui;
 	ofParameter<float> 	threshold;
