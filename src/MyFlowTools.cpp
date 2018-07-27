@@ -118,7 +118,7 @@ void MyFlowTools::exit(){
 
 void MyFlowTools::setupGui() {
     
-    gui.setup("particle settings");
+    gui.setup("MyFlowToolsSettings");
     //    gui.setDefaultBackgroundColor(ofColor(0, 0, 0, 127));
     //    gui.setDefaultFillColor(ofColor(160, 160, 160, 160));
     gui.add(ID.set(myID));
@@ -157,6 +157,16 @@ void MyFlowTools::setupGui() {
     gui.add(velocityMask.parameters);
     
     gui.minimizeAll();
+	
+	// seva setting with give name
+	if (!ofFile("myflowtoolssettings.xml"))
+		gui.saveToFile("myflowtoolssettings.xml");
+	
+	gui.loadFromFile("myflowtoolssettings.xml");
+	
+	
+	
+	
     
     
 }
