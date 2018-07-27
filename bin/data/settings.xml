@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <settings>
-	<Threshold>5.75643</Threshold>
+	<Threshold>0</Threshold>
 	<Track_Hue_Saturation>0</Track_Hue_Saturation>
 	<black_white_threshold>0</black_white_threshold>
 </settings>
 <MyFlowToolsSettings>
-	<UnknownName></UnknownName>
+	<UnknownName />
 	<draw_mode>1</draw_mode>
 	<MODE>Composite</MODE>
 	<particle_flow>

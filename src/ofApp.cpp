@@ -19,7 +19,7 @@ void ofApp::setup(){
 	
 	
 	imgTest3.load("test-3.jpg");
-
+	
 	// init opencv
 	contourFinder.setMinAreaRadius(5);
 	contourFinder.setMaxAreaRadius(150);
@@ -35,8 +35,8 @@ void ofApp::setup(){
 	ofSoundStreamSettings settings;
 	
 	// if you want to set the device id to be different than the default
-//	 auto devices = soundStream.getDeviceList();
-//	 settings.device = devices[0];
+	//	 auto devices = soundStream.getDeviceList();
+	//	 settings.device = devices[0];
 	
 	// you can also get devices for an specific api
 	// auto devices = soundStream.getDevicesByApi(ofSoundDevice::Api::PULSE);
@@ -72,7 +72,7 @@ void ofApp::setup(){
 	fft = ofxFft::create(bufferSize, OF_FFT_WINDOW_HAMMING);
 	
 	// fft bin size = bufferSize / 2 + 1 ++++++++++++++++++++++
-//	cout << fft->getBinSize() << endl;
+	//	cout << fft->getBinSize() << endl;
 	
 	
 	
@@ -122,30 +122,30 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-
+	
 	// first handle on image
 	
-//	ofImage		tmpGrayImg;
-//	tmpGrayImg.allocate(imgTest3.getWidth(), imgTest3.getHeight(), OF_IMAGE_GRAYSCALE);
-//	
-//	ofPixels    tmpPixels;
-//	
-//	convertColor(imgTest3, tmpGrayImg, CV_RGB2GRAY);
-//	
-//	tmpPixels.allocate(imgTest3.getWidth(), imgTest3.getHeight(),3);
-//	for (int i = 0; i < imgTest3.getWidth(); i++) {
-//		for (int j = 0; j < imgTest3.getHeight(); j++) {
-//			ofColor color = tmpGrayImg.getColor(i, j);
-//			if(color[0] > blackWhiteThreshold.get()){
-//				tmpGrayImg.setColor(i, j,ofColor(255,255,255));
-//			}else{
-//				tmpGrayImg.setColor(i, j,ofColor(0,0,0));
-//				
-//			}
-//		}
-//	}
-//	
-//	imgTest3.setFromPixels(tmpPixels);
+	//	ofImage		tmpGrayImg;
+	//	tmpGrayImg.allocate(imgTest3.getWidth(), imgTest3.getHeight(), OF_IMAGE_GRAYSCALE);
+	//
+	//	ofPixels    tmpPixels;
+	//
+	//	convertColor(imgTest3, tmpGrayImg, CV_RGB2GRAY);
+	//
+	//	tmpPixels.allocate(imgTest3.getWidth(), imgTest3.getHeight(),3);
+	//	for (int i = 0; i < imgTest3.getWidth(); i++) {
+	//		for (int j = 0; j < imgTest3.getHeight(); j++) {
+	//			ofColor color = tmpGrayImg.getColor(i, j);
+	//			if(color[0] > blackWhiteThreshold.get()){
+	//				tmpGrayImg.setColor(i, j,ofColor(255,255,255));
+	//			}else{
+	//				tmpGrayImg.setColor(i, j,ofColor(0,0,0));
+	//
+	//			}
+	//		}
+	//	}
+	//
+	//	imgTest3.setFromPixels(tmpPixels);
 	
 	
 	
@@ -156,7 +156,7 @@ void ofApp::update(){
 	contourFinder.setThreshold(threshold);
 	contourFinder.findContours(imgTest3);
 	
-
+	
 	
 	
 	//	simpleCam.update();
@@ -196,21 +196,21 @@ void ofApp::draw(){
 	
 	
 	// audio analyse debug ===========================
-//	int yPos = 500;
-//
-//	if(fftData){
-//		int fftBinScale = 500;
-//		int fftBinWidth = 2;
-//		for (int i = 0; i < fft->getBinSize(); i++) {
-//			ofDrawRectangle(fftBinWidth * i, yPos, fftBinWidth, - 1 * fftData[i] * fftBinScale);
-//		}
-//
-//	}
-//	int rmsScale = 500;
-//	ofSetColor(0,255,0,255);
-//	ofDrawRectangle(10, yPos + 10, rmsScale * rms, 20);
-//
-
+	//	int yPos = 500;
+	//
+	//	if(fftData){
+	//		int fftBinScale = 500;
+	//		int fftBinWidth = 2;
+	//		for (int i = 0; i < fft->getBinSize(); i++) {
+	//			ofDrawRectangle(fftBinWidth * i, yPos, fftBinWidth, - 1 * fftData[i] * fftBinScale);
+	//		}
+	//
+	//	}
+	//	int rmsScale = 500;
+	//	ofSetColor(0,255,0,255);
+	//	ofDrawRectangle(10, yPos + 10, rmsScale * rms, 20);
+	//
+	
 	
 	//	if(drawBackImg){
 	//		imgTest1.draw(0,0);
@@ -235,54 +235,19 @@ void ofApp::draw(){
 	//	fboImg.draw(0, 0);
 	
 	
-//		imgTest3.draw(0, 0);
+	//		imgTest3.draw(0, 0);
 	
 	ofPixels tmpPixels = imgTest3.getPixels();
 	
-	if(contourIndex >= 0 & contourIndex < contourFinder.getContours().size()){
-		
-		
-		for (int i = 0; i < contourFinder.getContours().size(); i++) {
-			if(i <= contourIndex){
-				
-				// draw contour finder points only ================
-				//				std::vector<cv::Point> points = contourFinder.getContour(i);
-				
-				//				for (int j = 0; j < points.size(); j++) {
-				//					cv::Point point = points[j];
-				//					tmpPixels.setColor(point.x, point.y, ofColor(255,0,0));
-				//				}
-				
-				
-				
-				
-				
-				
-				
-				// draw all point red inside a polyline
-				ofPolyline polyLine = contourFinder.getPolyline(i);
-
-				for (int j = 0; j < tmpPixels.getWidth(); j++) {
-					for (int k = 0; k < tmpPixels.getHeight(); k++) {
-						cv::Point p = cv::Point(j,k);
-						if(polyLine.inside(j, k)){
-							tmpPixels.setColor(j,k, ofColor(255,0,0));
-						}
-
-					}
-				}
-				
-				
-				
-				// =================================
-				
-				
+	if(contourIndex >= 0 & contourIndex <= contourFinder.getContours().size()){
+		for (int j = 0; j < contourIndex; j++) {
+			for (int k = 0; k < contourBlobs[j].size(); k++) {
+				tmpPixels.setColor(contourBlobs[j][k].x, contourBlobs[j][k].y, ofColor(255,0,0));
 			}
-		}// end iterate contourfinder
+		}
 		
-	}// end check contourIndex
-	
-	
+	}
+
 	
 	
 	ofImage tmpImg;
@@ -298,7 +263,7 @@ void ofApp::draw(){
 	
 	
 	// opencv
-//	contourFinder.draw();
+	//	contourFinder.draw();
 	
 	gui.draw();
 	
@@ -363,10 +328,62 @@ void ofApp::keyPressed(int key){
 			drawBackImg = false;
 			break;
 			
-		// for debug test only ==================
+			// for debug test only ==================
 		case 'c':
+			if(contourIndex > contourFinder.getContours().size() + 1){
+				contourIndex = -1;
+			}
 			contourIndex += 1;
 			break;
+			
+			
+		case 'b':
+			contourIndex = -1;
+			contourBlobs.clear();
+			
+			for (int i = 0; i < contourFinder.getContours().size(); i++) {
+				vector<cv::Point> curBlob;
+				
+				// collect contour finder points  ================
+				vector<cv::Point> points = contourFinder.getContour(i);
+				
+				for (int j = 0; j < points.size(); j++) {
+					cv::Point point = points[j];
+					
+					curBlob.push_back(point);
+					
+				}
+				
+				
+				
+				
+				
+				
+				
+				// collect all point inside current contour polyline
+				ofPolyline polyLine = contourFinder.getPolyline(i);
+				
+				for (int j = 0; j < imgTest3.getWidth(); j++) {
+					for (int k = 0; k < imgTest3.getHeight(); k++) {
+						cv::Point p = cv::Point(j,k);
+						if(polyLine.inside(j, k)){
+							curBlob.push_back(p);
+						}
+						
+					}
+				}
+				
+				
+				
+				// collect curBlob
+				
+				contourBlobs.push_back(curBlob);
+				
+				
+				
+			}// end iterate contourfinder
+			
+			
 		default:
 			break;
 	}

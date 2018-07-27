@@ -112,7 +112,7 @@ public:
 	ofImage				imgTest3;
 	bool				drawTestImage = false;
 	bool				drawBackImg = true;
-	
+	vector<vector<cv::Point>>  contourBlobs;
 	
 	ofxPanel			gui;
 	ofParameter<float> 	threshold;
