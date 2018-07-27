@@ -52,7 +52,7 @@ void ofApp::setup(){
 	}
 	
 	int sampleRate = 44100;
-	int bufferSize = 256;
+	int bufferSize = 512;
 	
 	left.assign(bufferSize, 0.0);
 	right.assign(bufferSize, 0.0);
@@ -193,17 +193,20 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 	
-	ofSetColor(0,255,0,255);
-	ofDrawRectangle(10, 35, 100 * rms, 20);
-	
+	int yPos = 500;
+
 	if(fftData){
 		int fftBinScale = 500;
-		int fftBinWidth = 10;
+		int fftBinWidth = 2;
 		for (int i = 0; i < fft->getBinSize(); i++) {
-			ofDrawRectangle(fftBinWidth * i, 50, fftBinWidth, fftData[i] * fftBinScale);
+			ofDrawRectangle(fftBinWidth * i, yPos, fftBinWidth, - 1 * fftData[i] * fftBinScale);
 		}
 		
 	}
+	int rmsScale = 500;
+	ofSetColor(0,255,0,255);
+	ofDrawRectangle(10, yPos + 10, rmsScale * rms, 20);
+	
 
 	
 	//	if(drawBackImg){
