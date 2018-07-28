@@ -110,6 +110,8 @@ public:
 	
 	ofImage				imgTest1;
 	ofImage				imgTest3;
+	ofImage				obsticleImg; // invert of back image
+	ofImage				backImg; // show rest writtings
 	bool				drawTestImage = false;
 	bool				drawBackImg = true;
 	vector<vector<cv::Point>>  contourBlobs;

@@ -180,6 +180,63 @@ void ofApp::update(){
 	
 	
 	
+	
+	
+	
+	
+	// prepare back image below flow image ====================
+	//  draw current contourindex contour blobs white
+	
+	ofPixels tmpPixels = imgTest3.getPixels();
+	
+	if(contourIndex >= 0 & contourIndex <= contourFinder.getContours().size()){
+		
+		
+		// thread out error ======================  TODO
+		for (int k = 0; k <= contourIndex; k++) {
+			if(contourBlobs[k].size() > 0){
+				for (int j = 0; j < contourBlobs[k].size(); j++) {
+					
+					tmpPixels.setColor(contourBlobs[k][j].x, contourBlobs[k][j].y, ofColor(255,255,255));
+					
+				}
+			}
+			
+			
+		}
+		
+		
+	}
+	
+	backImg.setFromPixels(tmpPixels);
+	
+	
+	
+	
+	// prepare obsticle image from back image invert
+	// invert each pixel for obsticle;
+	for (int i = 0; i < tmpPixels.getWidth(); i++) {
+		for(int j = 0;j < tmpPixels.getHeight();j++){
+			tmpPixels.setColor(i, j,tmpPixels.getColor(i, j).invert());
+		}
+	}
+	
+	obsticleImg.setFromPixels(tmpPixels);
+	
+	ofPushStyle();
+	ofEnableBlendMode(OF_BLENDMODE_DISABLED);
+	obsticleFbo.begin();
+	obsticleImg.draw(0, 0);
+	obsticleFbo.end();
+	ofPopStyle();
+	
+	
+	
+	
+	
+	
+	
+	
 	// flow tools =====================================
 	
 	ofPushStyle();
@@ -210,7 +267,12 @@ void ofApp::update(){
 	flowFbo.end();
 	ofPopStyle();
 	
+
+	
+
 	myFlowTools.update(&flowFbo,&obsticleFbo);
+	
+	
 	
 }
 
@@ -242,36 +304,10 @@ void ofApp::draw(){
 	//		imgTest1.draw(0,0);
 	//	}
 	
+
+	
 	// draw image below flow
-	//  draw current contourindex contour blobs white
-	
-	ofPixels tmpPixels = imgTest3.getPixels();
-	if(contourIndex >= 0 & contourIndex <= contourFinder.getContours().size()){
-		
-		
-		// thread out error ======================  TODO 
-		for (int k = 0; k <= contourIndex; k++) {
-			if(contourBlobs[k].size() > 0){
-				for (int j = 0; j < contourBlobs[k].size(); j++) {
-					
-					tmpPixels.setColor(contourBlobs[k][j].x, contourBlobs[k][j].y, ofColor(255,255,255));
-					
-				}
-			}
-			
-			
-		}
-		
-		
-	}
-	
-	ofImage tmpImg;
-	tmpImg.setFromPixels(tmpPixels);
-	tmpImg.draw(0, 0);
-	
-	
-	
-	
+	backImg.draw(0, 0);
 	
 	
 	// draw flow ============================================
