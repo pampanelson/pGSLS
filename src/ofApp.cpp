@@ -19,10 +19,10 @@ void ofApp::setup(){
 	fbo.allocate(ofGetWindowWidth(),ofGetWindowHeight(),GL_RGBA);
 	
 	
-	imgTest1.load("test-2.jpg");
+	//	imgTest1.load("test-2.jpg");
 	
 	
-	imgTest3.load("test-3.jpg");
+	imgTest3.load("test-4.jpg");
 	
 	// init opencv
 	contourFinder.setMinAreaRadius(5);
@@ -111,6 +111,7 @@ void ofApp::setup(){
 	gui.add(threshold.set("Threshold", 128, 0, 255));
 	gui.add(trackHs.set("Track Hue/Saturation", false));
 	gui.add(blackWhiteThreshold.set("black white threshold",0,1,255));
+	gui.add(rmsThreshold.set("rms threshold",0,0.02,1));
 	
 	// seva setting with give name
 	if (!ofFile("settings.xml"))
@@ -184,12 +185,25 @@ void ofApp::update(){
 	
 	
 	
+	if(rms >= rmsThreshold.get() && vecContourBlobImagesForFlow.size() > 0){
+		goNextFlow();
+	}
+	
+	
+	
+	
+	
 	// prepare back image below flow image ====================
 	//  draw current contourindex contour blobs white
 	
 	ofPixels tmpPixels = imgTest3.getPixels();
 	
-	if(contourIndex >= 0 & contourIndex <= contourFinder.getContours().size()){
+	
+	// according contour finder
+	//	if(contourIndex >= 0 & contourIndex < contourFinder.getContours().size()){
+	
+	// according vecContourBlobImagesForFlow
+	if(contourIndex >= 0 & contourIndex < vecContourBlobImagesForFlow.size()){
 		
 		
 		// thread out error ======================  TODO
@@ -242,7 +256,6 @@ void ofApp::update(){
 	ofPushStyle();
 	ofEnableBlendMode(OF_BLENDMODE_DISABLED);
 	flowFbo.begin();
-	
 	//		if(drawTestImage){
 	//			imgTest1.draw(0, sin(ofGetElapsedTimeMillis()));
 	//		}
@@ -257,19 +270,26 @@ void ofApp::update(){
 			vecDrawImageForFlowOnce[contourIndex] = timeStamp;
 			
 		}
-		int delta = timeStamp - vecDrawImageForFlowOnce[contourIndex];
+		int delta = timeStamp - vecDrawImageForFlowOnce[contourIndex] + 1;
 		if(delta < drawImageForFlowMilSecs){
-			vecContourBlobImagesForFlow[contourIndex].draw(0,-1 * delta / deltaSpeedFactor);
+			//			vecContourBlobImagesForFlow[contourIndex].draw(0,-1 * delta / deltaSpeedFactor);
+			
+			// - y direction for debug ==============================  TODO
+			vecContourBlobImagesForFlow[contourIndex].draw(vecContourBlobImagesBoudingBox[contourIndex].x,
+														   vecContourBlobImagesBoudingBox[contourIndex].y -1 * delta / deltaSpeedFactor,
+														   vecContourBlobImagesBoudingBox[contourIndex].z,
+														   vecContourBlobImagesBoudingBox[contourIndex].w);
 		}
 	}
 	
 	
 	flowFbo.end();
+	
 	ofPopStyle();
 	
-
 	
-
+	
+	
 	myFlowTools.update(&flowFbo,&obsticleFbo);
 	
 	
@@ -280,31 +300,13 @@ void ofApp::update(){
 void ofApp::draw(){
 	
 	
-	// audio analyse debug ===========================
-	//	int yPos = 500;
-	//
-	//	if(fftData){
-	//		int fftBinScale = 500;
-	//		int fftBinWidth = 2;
-	//		for (int i = 0; i < fft->getBinSize(); i++) {
-	//			ofDrawRectangle(fftBinWidth * i, yPos, fftBinWidth, - 1 * fftData[i] * fftBinScale);
-	//		}
-	//
-	//	}
-	//	int rmsScale = 500;
-	//	ofSetColor(0,255,0,255);
-	//	ofDrawRectangle(10, yPos + 10, rmsScale * rms, 20);
-	//
-	
-	
-	
 	
 	
 	//	if(drawBackImg){
 	//		imgTest1.draw(0,0);
 	//	}
 	
-
+	
 	
 	// draw image below flow
 	backImg.draw(0, 0);
@@ -321,7 +323,7 @@ void ofApp::draw(){
 		for (int j = 0; j < fboPixels.getHeight(); j++) {
 			ofColor color = fboPixels.getColor(i, j);
 			if(color[0] > 0){
-				fboPixels.setColor(i, j,ofColor(0,0,0,color[3]));
+				fboPixels.setColor(i, j,ofColor(0,0,0,color[4]));
 				
 			}
 		}
@@ -338,9 +340,16 @@ void ofApp::draw(){
 	// opencv
 	//	contourFinder.draw();
 	
-	gui.draw();
+	if(bDrawGui){
+		
+		gui.draw();
+		
+		myFlowTools.drawGui();
+		
+		showAudioDebug();
+		
+	}
 	
-	myFlowTools.drawGui();
 }
 
 //--------------------------------------------------------------
@@ -354,7 +363,27 @@ void ofApp::exit(){
 }
 
 
-
+void ofApp::showAudioDebug(){
+	//audio analyse debug ===========================
+	int yPos = 500;
+	
+	if(fftData){
+		int fftBinScale = 500;
+		int fftBinWidth = 2;
+		for (int i = 0; i < fft->getBinSize(); i++) {
+			ofSetColor(0,255,0,255);
+			ofDrawRectangle(fftBinWidth * i, yPos, fftBinWidth, - 1 * fftData[i] * fftBinScale);
+		}
+		
+	}
+	int rmsScale = 500;
+	ofSetColor(0,255,0,255);
+	ofDrawRectangle(10, yPos + 10, rmsScale * rms, 20);
+	
+	ofSetColor(255, 255, 255);
+	
+	
+}
 
 //--------------------------------------------------------------
 
@@ -392,10 +421,29 @@ void ofApp::audioIn(ofSoundBuffer & input){
 	
 }
 
+void ofApp::goNextFlow(){
+	if(contourIndex >= vecContourBlobImagesForFlow.size()){
+		contourIndex = -1;
+		
+		// reset draw timestamp
+		for (int i = 0; i < vecDrawImageForFlowOnce.size(); i++) {
+			vecDrawImageForFlowOnce[i] = 0;
+		}
+		
+		
+	}
+	contourIndex += 1;
+	
+}
+
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
 	switch(key){
+			
+		case 'g':
+			bDrawGui = !bDrawGui;
+			break;
 		case 'd':
 			drawTestImage = true;
 			drawBackImg = false;
@@ -403,18 +451,7 @@ void ofApp::keyPressed(int key){
 			
 			// for debug test only ==================
 		case 'c':
-			if(contourIndex > contourFinder.getContours().size() + 1){
-				contourIndex = -1;
-				
-				// reset draw timestamp
-				for (int i = 0; i < vecDrawImageForFlowOnce.size(); i++) {
-					vecDrawImageForFlowOnce[i] = 0;
-				}
-				
-				
-			}
-			contourIndex += 1;
-			
+			goNextFlow();
 			break;
 			
 			
@@ -461,11 +498,22 @@ void ofApp::keyPressed(int key){
 				contourBlobs.push_back(curBlob);
 				
 				
+				// get bouding box data left point position x y and width and height;
+				ofVec4f boudingBox;
+				boudingBox.set(contourFinder.getBoundingRect(i).x, contourFinder.getBoundingRect(i).y, contourFinder.getBoundingRect(i).width, contourFinder.getBoundingRect(i).height);
+				
+				
 				// make a image with blob points and collect
 				ofImage img;
-				img.allocate(imgTest3.getWidth(), imgTest3.getHeight(), OF_IMAGE_GRAYSCALE);
+				// make a img for contour as sub image
+				
+				
+				img.allocate(boudingBox.z,boudingBox.w,OF_IMAGE_GRAYSCALE);
+				
+				//				img.allocate(imgTest3.getWidth(), imgTest3.getHeight(), OF_IMAGE_GRAYSCALE);
 				ofPixels pixels;
-				pixels.allocate(imgTest3.getWidth(), imgTest3.getHeight(), 1);
+				//				pixels.allocate(imgTest3.getWidth(), imgTest3.getHeight(), 1);
+				pixels.allocate(boudingBox.z,boudingBox.w,1);
 				pixels.setImageType(OF_IMAGE_GRAYSCALE);
 				
 				// draw all white background
@@ -476,7 +524,10 @@ void ofApp::keyPressed(int key){
 				// draw black point for contour blob
 				for (int i = 0; i < curBlob.size(); i++) {
 					
-					pixels.setColor(curBlob[i].x, curBlob[i].y, ofColor(0));
+					//					pixels.setColor(curBlob[i].x, curBlob[i].y, ofColor(0));
+					
+					// move point according contour finder target image to saperate image (0,0)
+					pixels.setColor(curBlob[i].x - boudingBox.x, curBlob[i].y - boudingBox.y, ofColor(0));
 				}
 				
 				img.setFromPixels(pixels);
@@ -491,6 +542,8 @@ void ofApp::keyPressed(int key){
 				vecDrawImageForFlowOnce.push_back(0);
 				
 				
+				// save bouding box data to draw sub section but whole image
+				vecContourBlobImagesBoudingBox.push_back(boudingBox);
 			}// end iterate contourfinder
 			
 			

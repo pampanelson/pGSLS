@@ -3,6 +3,7 @@
 	<Threshold>0</Threshold>
 	<Track_Hue_Saturation>0</Track_Hue_Saturation>
 	<black_white_threshold>0</black_white_threshold>
+	<rms_threshold>0.0422988</rms_threshold>
 </settings>
 <MyFlowToolsSettings>
 	<UnknownName />
