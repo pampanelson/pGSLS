@@ -20,6 +20,7 @@ public:
 	void exit();
 	
 private:
+	MyFlowTools myFlowTools;
 
 };
 
