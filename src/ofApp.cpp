@@ -149,8 +149,8 @@ void ofApp::draw(){
 	for (int i = 0; i < fboPixels.getWidth(); i++) {
 		for (int j = 0; j < fboPixels.getHeight(); j++) {
 			ofColor color = fboPixels.getColor(i, j);
-			if(color[0] > 0){
-				fboPixels.setColor(i, j,ofColor(0,0,0,color[4]));
+			if(color[3] > 0){
+				fboPixels.setColor(i, j,ofColor(255,0,0,color[3]));
 				
 			}
 		}
