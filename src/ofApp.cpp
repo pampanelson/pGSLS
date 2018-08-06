@@ -166,30 +166,7 @@ void ofApp::draw(){
 	//	}
 	
 	
-	
-	// draw image below flow
-	
-	
-	// draw flow ============================================
-	fbo.begin();
-	ofClear(0, 0, 0);
 	myFlowTools.draw();
-	fbo.end();
-	
-	fbo.readToPixels(fboPixels);
-	for (int i = 0; i < fboPixels.getWidth(); i++) {
-		for (int j = 0; j < fboPixels.getHeight(); j++) {
-			ofColor color = fboPixels.getColor(i, j);
-			if(color[0] > 0){
-				fboPixels.setColor(i, j,ofColor(0,0,0,color[4]));
-				
-			}
-		}
-	}
-	
-	fboImg.setFromPixels(fboPixels);
-	fboImg.draw(0, 0);
-	
 	
 	//		imgTest3.draw(0, 0);
 	
