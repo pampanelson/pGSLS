@@ -111,7 +111,7 @@ public:
 	
 	string               	myID;
 	
-	ofColor					finalColor = ofColor(128,128,128,255);// default color is gray;
+	ofColor					finalColor = ofColor(255,0,0);// default color is gray;
 	int						finalColorAlphaThreshold = 0; // default alpha threshold
 	
 private:

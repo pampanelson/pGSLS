@@ -116,7 +116,9 @@ void MyFlowTools::draw(){
 	
 	// set color ========================
 	ofPixels 	fboPixels;
+	fboPixels.allocate(drawWidth, drawHeight, 4);
 	ofImage		fboImg;
+	fboImg.allocate(drawWidth, drawHeight, OF_IMAGE_COLOR);
 	finalFbo.readToPixels(fboPixels);
 	for (int i = 0; i < fboPixels.getWidth(); i++) {
 		for (int j = 0; j < fboPixels.getHeight(); j++) {
@@ -124,11 +126,11 @@ void MyFlowTools::draw(){
 			
 			// need better check
 			// check with alpha
-			if(color[3] > finalColorAlphaThreshold){
+			if(color.a > finalColorAlphaThreshold){
 				fboPixels.setColor(i, j,ofColor(finalColor.r,
 												finalColor.g,
 												finalColor.b,
-												color[3]));
+												color.a));
 				
 			}
 		}

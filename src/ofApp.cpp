@@ -22,16 +22,16 @@ void ofApp::setup(){
 	//	imgTest1.load("test-2.jpg");
 	
 	
-
-
 	
 	
 	
-	 //init camera
-		simpleCam.setup(640, 480, true);
-		didCamUpdate = false;
-		cameraFbo.allocate(640, 480);
-		cameraFbo.black();
+	
+	
+	//init camera
+	simpleCam.setup(640, 480, true);
+	didCamUpdate = false;
+	cameraFbo.allocate(640, 480);
+	cameraFbo.black();
 	
 	drawWidth = ofGetWindowWidth();
 	drawHeight = ofGetWindowHeight();
@@ -40,11 +40,12 @@ void ofApp::setup(){
 	
 	ratio = 1;
 	
-	myFlowTools.setup(drawWidth, drawHeight, ratio,"myFlow");
+	myFlowTools.setup(drawWidth, drawHeight, ratio,"myFlow1");
 	flowFbo.allocate(drawWidth,drawHeight);
 	obsticleFbo.allocate(drawWidth,drawHeight);
 	
-	
+	// set color for myflowtools
+	myFlowTools.setFinalColor(ofColor(255,0,0));
 	
 	gui.setup("settings");
 	
@@ -61,72 +62,43 @@ void ofApp::setup(){
 	gui.loadFromFile("settings.xml");
 	
 	
-
+	
 	
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
 	
-	// first handle on image
+	// use camera to make flow for test ===============
+	//	ofPushStyle();
+	//	ofEnableBlendMode(OF_BLENDMODE_DISABLED);
+	flowFbo.begin();
+	ofClear(0, 0, 0);
 	
-	//	ofImage		tmpGrayImg;
-	//	tmpGrayImg.allocate(imgTest3.getWidth(), imgTest3.getHeight(), OF_IMAGE_GRAYSCALE);
-	//
-	//	ofPixels    tmpPixels;
-	//
-	//	convertColor(imgTest3, tmpGrayImg, CV_RGB2GRAY);
-	//
-	//	tmpPixels.allocate(imgTest3.getWidth(), imgTest3.getHeight(),3);
-	//	for (int i = 0; i < imgTest3.getWidth(); i++) {
-	//		for (int j = 0; j < imgTest3.getHeight(); j++) {
-	//			ofColor color = tmpGrayImg.getColor(i, j);
-	//			if(color[0] > blackWhiteThreshold.get()){
-	//				tmpGrayImg.setColor(i, j,ofColor(255,255,255));
-	//			}else{
-	//				tmpGrayImg.setColor(i, j,ofColor(0,0,0));
-	//
-	//			}
-	//		}
-	//	}
-	//
-	//	imgTest3.setFromPixels(tmpPixels);
+	simpleCam.update();
+	if (doFlipCamera){
+		simpleCam.draw(cameraFbo.getWidth(), 0, -cameraFbo.getWidth(), cameraFbo.getHeight());
+		
+	}  // Flip Horizontal
+	else{
+		simpleCam.draw(0, 0, cameraFbo.getWidth(), cameraFbo.getHeight());
+		
+	}
 	
 	
+	flowFbo.end();
 	
-	
-	
-	// opencv
-	//	contourFinder.setTargetColor(targetColor, trackHs ? TRACK_COLOR_HS : TRACK_COLOR_RGB);
-	//	contourFinder.setThreshold(threshold);
-	//	contourFinder.findContours(imgTest3);
+	ofPopStyle();
 	//
 	
 	
-	
-	//	simpleCam.update();
-	//		if (doFlipCamera){
-	//			simpleCam.draw(cameraFbo.getWidth(), 0, -cameraFbo.getWidth(), cameraFbo.getHeight());
-	//
-	//		}  // Flip Horizontal
-	//		else{
-	//			simpleCam.draw(0, 0, cameraFbo.getWidth(), cameraFbo.getHeight());
-	//
-	//		}
-	
-	
-	
-	
-	
-	
-
 	
 	
 	// prepare back image below flow image ====================
 	//  draw current contourindex contour blobs white
 	
 	
-
+	
 	
 	
 	
@@ -134,18 +106,17 @@ void ofApp::update(){
 	
 	// flow tools =====================================
 	
-	ofPushStyle();
-	ofEnableBlendMode(OF_BLENDMODE_DISABLED);
-	flowFbo.begin();
-	//		if(drawTestImage){
-	//			imgTest1.draw(0, sin(ofGetElapsedTimeMillis()));
-	//		}
-	//
-	
-	flowFbo.end();
-	
-	ofPopStyle();
-	
+
+//	flowFbo.begin();
+//	//		if(drawTestImage){
+//	//			imgTest1.draw(0, sin(ofGetElapsedTimeMillis()));
+//	//		}
+//	//
+//
+//	flowFbo.end();
+//
+//	ofPopStyle();
+//
 	
 	
 	
@@ -207,7 +178,7 @@ void ofApp::keyPressed(int key){
 		case 'g':
 			bDrawGui = !bDrawGui;
 			break;
-
+			
 		default:
 			break;
 	}
