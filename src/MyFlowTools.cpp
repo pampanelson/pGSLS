@@ -86,13 +86,6 @@ void MyFlowTools::update(ofFbo *_fboForFluidP,ofFbo *_obstacleFboP){
 
 //--------------------------------------------------------------
 void MyFlowTools::draw(){
-	
-	
-	//draw flow ==========================
-	finalFbo.begin();
-	ofClear(0, 0, 0);
-	
-	
 	switch(drawMode) {
 		case DRAW_COMPOSITE: drawComposite(); break;
 		case DRAW_PARTICLES: drawParticles(); break;
@@ -111,37 +104,7 @@ void MyFlowTools::draw(){
 			//            case DRAW_MOUSE: drawMouseForces(); break;
 			//            case DRAW_VELDOTS: drawVelocityDots(); break;
 	}
-	
-	finalFbo.end();
-	
-	// set color ========================
-	ofPixels 	fboPixels;
-	fboPixels.allocate(drawWidth, drawHeight, 4);
-	ofImage		fboImg;
-	fboImg.allocate(drawWidth, drawHeight, OF_IMAGE_COLOR);
-	finalFbo.readToPixels(fboPixels);
-	for (int i = 0; i < fboPixels.getWidth(); i++) {
-		for (int j = 0; j < fboPixels.getHeight(); j++) {
-			ofColor color = fboPixels.getColor(i, j);
-			
-			// need better check
-			// check with alpha
-			if(color.a > finalColorAlphaThreshold){
-				fboPixels.setColor(i, j,ofColor(finalColor.r,
-												finalColor.g,
-												finalColor.b,
-												color.a));
-				
-			}
-		}
-	}
-	
-	fboImg.setFromPixels(fboPixels);
-	
-	// changeble position to draw ? --------------------  TODO
-	fboImg.draw(0, 0);
-	
-	
+
 	
 }
 //--------------------------------------------------------------
@@ -152,18 +115,11 @@ void MyFlowTools::exit(){
 
 void MyFlowTools::setFinalColor(ofColor c){
 	finalColor = c;
+	
+	// need change color in glsl -------------------  TODO
 }
 
-//--------------------------------------------------------------
 
-void MyFlowTools::setFinalColorThreshold(int t){
-	if(t <= 255){
-		finalColorAlphaThreshold = t;
-
-	}else{
-		finalColorAlphaThreshold = 255;
-	}
-}
 void MyFlowTools::setupGui() {
 	
 	gui.setup("MyFlowToolsSettings");

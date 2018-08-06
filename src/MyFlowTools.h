@@ -47,7 +47,6 @@ public:
 	
 	
 	void setFinalColor(ofColor _color);
-	void setFinalColorThreshold(int _alpha);
 	
 	
 	void setParticleColor(ofColor _color);
@@ -112,7 +111,6 @@ public:
 	string               	myID;
 	
 	ofColor					finalColor = ofColor(255,0,0);// default color is gray;
-	int						finalColorAlphaThreshold = 0; // default alpha threshold
 	
 private:
 	float 					ratio;
@@ -120,7 +118,7 @@ private:
 	int 					drawHeight;
 	int 					flowWidth;
 	int 					flowHeight;
-	ofFbo					finalFbo;
+
 	
 	
 	

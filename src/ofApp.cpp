@@ -14,7 +14,7 @@ void ofApp::setup(){
 	
 	
 	// white background color
-	ofSetBackgroundColor(255, 255, 255);
+	ofSetBackgroundColor(127, 127, 127);
 	
 	fbo.allocate(ofGetWindowWidth(),ofGetWindowHeight(),GL_RGBA);
 	
