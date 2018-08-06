@@ -112,7 +112,7 @@ void ofApp::update(){
 	ofPushStyle();
 	ofEnableBlendMode(OF_BLENDMODE_DISABLED);
 	obsticleFbo.begin();
-	obsticleImg.draw(0, 0);
+	//obsticleImg.draw(0, 0);
 	obsticleFbo.end();
 	ofPopStyle();
 	
@@ -149,23 +149,15 @@ void ofApp::draw(){
 	for (int i = 0; i < fboPixels.getWidth(); i++) {
 		for (int j = 0; j < fboPixels.getHeight(); j++) {
 			ofColor color = fboPixels.getColor(i, j);
-			if(color[3] > 0){
-				fboPixels.setColor(i, j,ofColor(255,0,0,color[3]));
-				
-			}
+			// just draw image according flow frame image alpha value
+			// with given color
+			fboPixels.setColor(i, j,ofColor(255,126,0,color.a));
+			
 		}
 	}
 	
 	fboImg.setFromPixels(fboPixels);
 	fboImg.draw(0, 0);
-	
-	
-	//		imgTest3.draw(0, 0);
-	
-	
-	
-	// opencv
-	//	contourFinder.draw();
 	
 	if(bDrawGui){
 		

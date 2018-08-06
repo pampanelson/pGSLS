@@ -103,6 +103,7 @@ public:
 	ofParameter<bool> 	trackHs;
 	ofParameter<int>	blackWhiteThreshold;
 	ofParameter<float>	rmsThreshold;
+	
 
 	bool				bDrawGui = true;
 	
