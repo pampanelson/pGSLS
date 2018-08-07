@@ -128,6 +128,9 @@ public:
 	ofxPanel			gui;
 	ofParameter<float> 	threshold;
 	ofParameter<bool> 	trackHs;
+	ofParameter<bool> 	bStartFlow;
+	ofParameter<bool> 	bContourFinderUpdate;
+	ofParameter<bool> 	bShowContour;
 	ofParameter<int>	blackWhiteThreshold;
 	ofParameter<float>	rmsThreshold;
 

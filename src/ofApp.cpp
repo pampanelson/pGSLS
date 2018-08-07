@@ -22,7 +22,10 @@ void ofApp::setup(){
 	//	imgTest1.load("test-2.jpg");
 	
 	
-	imgTest3.load("test-4.jpg");
+	//	imgTest3.load("test-4.jpg");
+	
+	
+	imgTest3.load("alpha.jpg");
 	
 	// init opencv
 	contourFinder.setMinAreaRadius(5);
@@ -111,6 +114,9 @@ void ofApp::setup(){
 	gui.add(threshold.set("Threshold", 128, 0, 255));
 	gui.add(trackHs.set("Track Hue/Saturation", false));
 	gui.add(blackWhiteThreshold.set("black white threshold",0,1,255));
+	gui.add(bShowContour.set("show contour", false));
+	gui.add(bContourFinderUpdate.set("contourfinder update", false));
+	gui.add(bStartFlow.set("start flow", false));
 	gui.add(rmsThreshold.set("rms threshold",0,0.02,1));
 	
 	// seva setting with give name
@@ -161,10 +167,15 @@ void ofApp::update(){
 	
 	
 	// opencv
-	//	contourFinder.setTargetColor(targetColor, trackHs ? TRACK_COLOR_HS : TRACK_COLOR_RGB);
-	//	contourFinder.setThreshold(threshold);
-	//	contourFinder.findContours(imgTest3);
-	//
+	
+	if(bContourFinderUpdate.get()){
+		contourFinder.setTargetColor(targetColor, trackHs ? TRACK_COLOR_HS : TRACK_COLOR_RGB);
+		contourFinder.setThreshold(threshold);
+		contourFinder.findContours(imgTest3);
+		
+	}
+	
+	
 	
 	
 	
@@ -275,11 +286,11 @@ void ofApp::update(){
 			//			vecContourBlobImagesForFlow[contourIndex].draw(0,-1 * delta / deltaSpeedFactor);
 			
 			// - y direction for debug ==============================  TODO
-//			vecContourBlobImagesForFlow[contourIndex].draw(vecContourBlobImagesBoudingBox[contourIndex].x,
-//														   vecContourBlobImagesBoudingBox[contourIndex].y -1 * delta / deltaSpeedFactor,
-//														   vecContourBlobImagesBoudingBox[contourIndex].z,
-//														   vecContourBlobImagesBoudingBox[contourIndex].w);
-//			
+			//			vecContourBlobImagesForFlow[contourIndex].draw(vecContourBlobImagesBoudingBox[contourIndex].x,
+			//														   vecContourBlobImagesBoudingBox[contourIndex].y -1 * delta / deltaSpeedFactor,
+			//														   vecContourBlobImagesBoudingBox[contourIndex].z,
+			//														   vecContourBlobImagesBoudingBox[contourIndex].w);
+			//
 			
 			// -x direction for vertical handwriting ==============
 			vecContourBlobImagesForFlow[contourIndex].draw(vecContourBlobImagesBoudingBox[contourIndex].x - 1 * delta / deltaSpeedFactor,
@@ -346,7 +357,12 @@ void ofApp::draw(){
 	
 	
 	// opencv
-	//	contourFinder.draw();
+	
+	if(bShowContour.get()){
+		ofSetColor(255, 0, 0);
+		contourFinder.draw();
+	}
+	
 	
 	if(bDrawGui){
 		
@@ -430,17 +446,22 @@ void ofApp::audioIn(ofSoundBuffer & input){
 }
 
 void ofApp::goNextFlow(){
-	if(contourIndex >= vecContourBlobImagesForFlow.size()){
-		contourIndex = -1;
-		
-		// reset draw timestamp
-		for (int i = 0; i < vecDrawImageForFlowOnce.size(); i++) {
-			vecDrawImageForFlowOnce[i] = 0;
+	
+	if(bStartFlow.get()){
+		if(contourIndex >= vecContourBlobImagesForFlow.size()){
+			contourIndex = -1;
+			
+			// reset draw timestamp
+			for (int i = 0; i < vecDrawImageForFlowOnce.size(); i++) {
+				vecDrawImageForFlowOnce[i] = 0;
+			}
+			
+			
 		}
-		
+		contourIndex += 1;
 		
 	}
-	contourIndex += 1;
+	
 	
 }
 
