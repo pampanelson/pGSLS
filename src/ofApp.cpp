@@ -485,6 +485,10 @@ void ofApp::keyPressed(int key){
 			
 			
 		case 'b':
+			
+			// stop update contourfinder for effeciency 
+			bContourFinderUpdate.set(false);
+			
 			contourIndex = -1;
 			contourBlobs.clear();
 			
