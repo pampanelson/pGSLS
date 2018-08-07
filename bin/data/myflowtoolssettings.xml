@@ -17,7 +17,7 @@
 		<size>2</size>
 		<size_spread>0.75</size_spread>
 		<twinkle_speed>11</twinkle_speed>
-		<gravity>0, 9.80665</gravity>
+		<gravity>-9.8,0</gravity>
 	</particle_flow>
 	<optical_flow>
 		<strength>10</strength>
