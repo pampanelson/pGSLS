@@ -9,6 +9,15 @@ void ofApp::setup(){
 	ofSetFrameRate(30);
 	ofSetVerticalSync(true);
 	
+	
+	//syphon server
+	individualTextureSyphonServer.setName("pGSLS_Syphon_Output");
+	syphonFbo.allocate(ofGetWindowWidth(),ofGetWindowHeight(), GL_RGBA);
+	
+
+
+	
+	
 	// gray background for debug
 	//	ofSetBackgroundColor(128, 128, 128);
 	
@@ -318,7 +327,8 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 	
-	
+	syphonFbo.begin();
+	ofClear(0, 0, 0);
 	
 	
 	//	if(drawBackImg){
@@ -356,12 +366,24 @@ void ofApp::draw(){
 	
 	
 	
+	
+	
+	
+	
 	// opencv
 	
 	if(bShowContour.get()){
 		ofSetColor(255, 0, 0);
 		contourFinder.draw();
 	}
+	
+	
+	
+	syphonFbo.end();
+	
+	individualTextureSyphonServer.publishTexture(&syphonFbo.getTexture());
+	
+	
 	
 	
 	if(bDrawGui){

@@ -6,6 +6,7 @@
 //#include "ofxFlowTools.h"
 #include "MyFlowTools.h"
 #include "ofxFft.h"
+#include "ofxSyphon.h"
 
 
 
@@ -47,6 +48,9 @@ public:
 	void draw();
 	void exit();
 
+	ofxSyphonServer 		individualTextureSyphonServer;
+	ofFbo					syphonFbo;
+	
 	
 	Scheduler               myTimer;
 
