@@ -34,7 +34,7 @@ void ofApp::setup(){
 	//	imgTest3.load("test-4.jpg");
 	
 	
-	imgTest3.load("alpha.jpg");
+	imgTest3.load("alpha1024x768.jpg");
 	
 	// init opencv
 	contourFinder.setMinAreaRadius(5);
@@ -295,17 +295,18 @@ void ofApp::update(){
 			//			vecContourBlobImagesForFlow[contourIndex].draw(0,-1 * delta / deltaSpeedFactor);
 			
 			// - y direction for debug ==============================  TODO
-			//			vecContourBlobImagesForFlow[contourIndex].draw(vecContourBlobImagesBoudingBox[contourIndex].x,
-			//														   vecContourBlobImagesBoudingBox[contourIndex].y -1 * delta / deltaSpeedFactor,
-			//														   vecContourBlobImagesBoudingBox[contourIndex].z,
-			//														   vecContourBlobImagesBoudingBox[contourIndex].w);
-			//
-			
-			// -x direction for vertical handwriting ==============
-			vecContourBlobImagesForFlow[contourIndex].draw(vecContourBlobImagesBoudingBox[contourIndex].x - 1 * delta / deltaSpeedFactor,
-														   vecContourBlobImagesBoudingBox[contourIndex].y,
+			vecContourBlobImagesForFlow[contourIndex].draw(
+														   vecContourBlobImagesBoudingBox[contourIndex].x,
+														   vecContourBlobImagesBoudingBox[contourIndex].y -1 * delta / deltaSpeedFactor,
 														   vecContourBlobImagesBoudingBox[contourIndex].z,
 														   vecContourBlobImagesBoudingBox[contourIndex].w);
+			
+			
+			// -x direction for vertical handwriting ==============
+//			vecContourBlobImagesForFlow[contourIndex].draw(vecContourBlobImagesBoudingBox[contourIndex].x - 1 * delta / deltaSpeedFactor,
+//														   vecContourBlobImagesBoudingBox[contourIndex].y,
+//														   vecContourBlobImagesBoudingBox[contourIndex].z,
+//														   vecContourBlobImagesBoudingBox[contourIndex].w);
 			
 		}
 	}
