@@ -64,6 +64,7 @@ public:
 	
 	// Time
 	float				lastTime;
+	float				curTime;
 	float				deltaTime;
 	
 	// FlowTools
@@ -72,9 +73,6 @@ public:
 	int					drawWidth;
 	int					drawHeight;
 	
-	
-	MyFlowTools			myFlowTools;
-	float				ratio;
 	
 	ofFbo				fbo;
 	ofPixels			fboPixels;
@@ -95,6 +93,7 @@ public:
 	
 	
 
+	int					curFlowIndex;
 	
 	
 	
@@ -108,7 +107,11 @@ public:
 	bool				bDrawGui = true;
 	
 	
-	
+	vector<MyFlowTools *>		vecMyFlowTools;
+	MyFlowTools			f1;
+	MyFlowTools			f2;
+	MyFlowTools			f3;
+
 	void keyPressed(int key);
 	void keyReleased(int key);
 	void mouseMoved(int x, int y );

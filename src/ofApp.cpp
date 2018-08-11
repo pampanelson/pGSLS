@@ -20,9 +20,6 @@ void ofApp::setup(){
 	
 	
 	
-	
-	
-	
 	// init camera
 	simpleCam.setup(640, 480, true);
 	didCamUpdate = false;
@@ -34,10 +31,27 @@ void ofApp::setup(){
 	//    flowWidth = drawWidth;
 	//    flowHeight = drawHeight;
 	
-	ratio = 1;
 	
-	myFlowTools.setup(drawWidth, drawHeight, ratio,"myFlow");
-	myFlowTools.setFlowColor(ofColor(ofRandom(255),ofRandom(255),ofRandom(255)));
+	float ratio = 1.0;
+
+	for(int i = 0;i < 9;i++){
+		MyFlowTools * f = new MyFlowTools();
+		f->setup(drawWidth, drawHeight, ratio, "myflow");
+		f->setFlowColor(ofColor(ofRandom(255),ofRandom(255),ofRandom(255)));
+		vecMyFlowTools.push_back(f);
+	}
+//	f1.setup(drawWidth, drawHeight, ratio, "myflow");
+//	f1.setFlowColor(ofColor(ofRandom(255),ofRandom(255),ofRandom(255)));
+//	vecMyFlowTools.push_back(f1);
+//	
+//	f2.setup(drawWidth, drawHeight, ratio, "myflow");
+//	f2.setFlowColor(ofColor(ofRandom(255),ofRandom(255),ofRandom(255)));
+//	vecMyFlowTools.push_back(f2);
+//	
+//	f3.setup(drawWidth, drawHeight, ratio, "myflow");
+//	f3.setFlowColor(ofColor(ofRandom(255),ofRandom(255),ofRandom(255)));
+//	vecMyFlowTools.push_back(f3);
+	
 	
 	flowFbo.allocate(drawWidth,drawHeight);
 	obsticleFbo.allocate(drawWidth,drawHeight);
@@ -74,15 +88,15 @@ void ofApp::update(){
 	
 	
 	simpleCam.update();
-//	if (doFlipCamera){
-//		simpleCam.draw(cameraFbo.getWidth(), 0, -cameraFbo.getWidth(), cameraFbo.getHeight());
-//
-//	}  // Flip Horizontal
-//	else{
-//		simpleCam.draw(0, 0, cameraFbo.getWidth(), cameraFbo.getHeight());
-//
-//	}
-//
+	//	if (doFlipCamera){
+	//		simpleCam.draw(cameraFbo.getWidth(), 0, -cameraFbo.getWidth(), cameraFbo.getHeight());
+	//
+	//	}  // Flip Horizontal
+	//	else{
+	//		simpleCam.draw(0, 0, cameraFbo.getWidth(), cameraFbo.getHeight());
+	//
+	//	}
+	//
 	
 	
 	
@@ -120,8 +134,31 @@ void ofApp::update(){
 	
 	
 	
+	curFlowIndex = int(ofGetElapsedTimef()) % vecMyFlowTools.size();
 	
-	myFlowTools.update(&flowFbo,&obsticleFbo);
+	for(int i = 0;i < vecMyFlowTools.size();i++){
+		if(i == curFlowIndex){
+			vecMyFlowTools[i]->update(&flowFbo, &obsticleFbo);
+
+		}else{
+			vecMyFlowTools[i]->update(&obsticleFbo, &obsticleFbo);
+		}
+	}
+	
+	
+	
+//	for (int i = 0; i < vecMyFlowTools.size(); i++) {
+//
+//		// need delete/release reource very carefully ++++++++++++++++++++++++++++++
+//		if(!vecMyFlowTools[i].isActive()){
+//			//			vecMyFlowTools.erase(vecMyFlowTools.begin() + i);
+//
+//		}
+//		vecMyFlowTools[i].update(&flowFbo, &obsticleFbo);
+//	}
+//
+//
+//	flowTools1.update(&flowFbo,&obsticleFbo);
 	
 	
 	
@@ -138,17 +175,14 @@ void ofApp::draw(){
 	//	}
 	
 	
-	// draw color by MyFlowTools
-	myFlowTools.drawColorFlow();
+	for (int i = 0; i < vecMyFlowTools.size(); i++) {
+		vecMyFlowTools[i]->drawColorFlow();
+	}
 	
 	
 	if(bDrawGui){
 		
 		gui.draw();
-		
-		myFlowTools.drawGui();
-		
-
 		
 	}
 	
@@ -174,9 +208,7 @@ void ofApp::keyPressed(int key){
 			
 			break;
 		case 'c':
-			
 			break;
-			
 		default:
 			break;
 	}
