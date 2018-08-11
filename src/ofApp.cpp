@@ -37,6 +37,8 @@ void ofApp::setup(){
 	ratio = 1;
 	
 	myFlowTools.setup(drawWidth, drawHeight, ratio,"myFlow");
+	myFlowTools.setFlowColor(ofColor(ofRandom(255),ofRandom(255),ofRandom(255)));
+	
 	flowFbo.allocate(drawWidth,drawHeight);
 	obsticleFbo.allocate(drawWidth,drawHeight);
 	

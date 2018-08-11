@@ -62,6 +62,9 @@ void MyFlowTools::setup(int _w,int _h,float _ratio,string _id){
     
     // MOUSE DRAW
     //    mouseForces.setup(flowWidth, flowHeight, drawWidth, drawHeight);
+	
+	// set default flow color with black
+	setFlowColor(ofColor(0,0,0));
     
     myID = _id;
     setupGui();
@@ -229,7 +232,11 @@ void MyFlowTools::drawColorFlow(){
 			ofColor color = fboPixels.getColor(i, j);
 			// just draw image according flow frame image alpha value
 			// with given color
-			fboPixels.setColor(i, j,ofColor(255,126,0,color.a));
+			fboPixels.setColor(i, j,
+							   ofColor(flowColor.r,
+									   flowColor.g,
+									   flowColor.b,
+									   color.a));
 			
 		}
 	}
@@ -264,6 +271,10 @@ void MyFlowTools::drawModeSetName(int &_value) {
 }
 
 
+//--------------------------------------------------------------
+void MyFlowTools::setFlowColor(ofColor _color){
+	flowColor = _color;
+}
 //--------------------------------------------------------------
 
 void MyFlowTools::setParticleColor(ofColor _color){

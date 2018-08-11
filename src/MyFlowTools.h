@@ -51,6 +51,8 @@ public:
 	void clear();
 	
 	
+	void	setFlowColor(ofColor _color);
+	
     void 	setParticleColor(ofColor _color);
     ofColor getParticleColor();
     
@@ -120,6 +122,7 @@ private:
     int 	drawHeight;
     int 	flowWidth;
     int 	flowHeight;
+	ofColor	flowColor;
     
     
     
