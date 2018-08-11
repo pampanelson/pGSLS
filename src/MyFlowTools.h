@@ -43,6 +43,8 @@ public:
     void setup(int _w,int _h,float _ratio,string settingFileName);
     void update(ofFbo *_fboForFluidP,ofFbo *_obstacleFboP);
     void draw();
+	
+	void drawColorFlow();
     void exit();
 	
 	// clear to release resource

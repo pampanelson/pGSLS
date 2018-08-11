@@ -202,6 +202,45 @@ void MyFlowTools::drawGui() {
 }
 //--------------------------------------------------------------
 
+void MyFlowTools::drawColorFlow(){
+
+	ofFbo fbo;
+	fbo.allocate(drawWidth, drawHeight);
+	ofPixels fboPixels;
+	fboPixels.allocate(drawWidth, drawHeight, 4);
+	
+	ofImage fboImg;
+	fboImg.allocate(drawWidth, drawHeight, OF_IMAGE_COLOR_ALPHA);
+	
+	
+	// draw flow ============================================
+	fbo.begin();
+	ofClear(0, 0, 0);
+	ofEnableBlendMode(OF_BLENDMODE_ADD);
+	fluidSimulation.draw(0,0,drawWidth,drawHeight);
+	ofEnableBlendMode(OF_BLENDMODE_ADD);
+	if (particleFlow.isActive())
+		particleFlow.draw(0,0,drawWidth, drawHeight);
+	fbo.end();
+	
+	fbo.readToPixels(fboPixels);
+	for (int i = 0; i < fboPixels.getWidth(); i++) {
+		for (int j = 0; j < fboPixels.getHeight(); j++) {
+			ofColor color = fboPixels.getColor(i, j);
+			// just draw image according flow frame image alpha value
+			// with given color
+			fboPixels.setColor(i, j,ofColor(255,126,0,color.a));
+			
+		}
+	}
+	
+	fboImg.setFromPixels(fboPixels);
+	fboImg.draw(0, 0);
+	
+	
+}
+//--------------------------------------------------------------
+
 void MyFlowTools::drawModeSetName(int &_value) {
     switch(_value) {
         case DRAW_NOTHING:            drawName.set("Draw Nothing");        break;

@@ -136,28 +136,9 @@ void ofApp::draw(){
 	//	}
 	
 	
+	// draw color by MyFlowTools
+	myFlowTools.drawColorFlow();
 	
-	
-	
-	// draw flow ============================================
-	fbo.begin();
-	ofClear(0, 0, 0);
-	myFlowTools.draw();
-	fbo.end();
-	
-	fbo.readToPixels(fboPixels);
-	for (int i = 0; i < fboPixels.getWidth(); i++) {
-		for (int j = 0; j < fboPixels.getHeight(); j++) {
-			ofColor color = fboPixels.getColor(i, j);
-			// just draw image according flow frame image alpha value
-			// with given color
-			fboPixels.setColor(i, j,ofColor(255,126,0,color.a));
-			
-		}
-	}
-	
-	fboImg.setFromPixels(fboPixels);
-	fboImg.draw(0, 0);
 	
 	if(bDrawGui){
 		
