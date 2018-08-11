@@ -81,7 +81,8 @@ public:
         drawSource(0,0,drawWidth,drawHeight);
     }
     void 	drawSource(int _x, int _y, int _width, int _height);
-    
+	
+	bool	isActive();
     int 	getDrawWidth();
     int 	getDrawHeight();
     int 	getFlowWidth();
@@ -123,8 +124,7 @@ private:
     int 	flowWidth;
     int 	flowHeight;
 	ofColor	flowColor;
-    
-    
+	bool	active;
     
 };
 
