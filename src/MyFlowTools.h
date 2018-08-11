@@ -44,76 +44,80 @@ public:
     void update(ofFbo *_fboForFluidP,ofFbo *_obstacleFboP);
     void draw();
     void exit();
-    
-    void setParticleColor(ofColor _color);
+	
+	// clear to release resource
+	void clear();
+	
+	
+    void 	setParticleColor(ofColor _color);
     ofColor getParticleColor();
     
-    void setParticleSpeedX(int _speed);
-    void drawComposite(){
+    void 	setParticleSpeedX(int _speed);
+    void 	drawComposite(){
         drawComposite(0,0,drawWidth,drawHeight);
     };
-    void drawComposite(int _x, int _y, int _width, int _height);
+    void 	drawComposite(int _x, int _y, int _width, int _height);
     
-    void drawParticles(){
+    void 	drawParticles(){
         drawParticles(0,0,drawWidth,drawHeight);
     };
-    void drawParticles(int _x, int _y, int _width, int _height);
+    void 	drawParticles(int _x, int _y, int _width, int _height);
     
-    void drawFluidFields(){
+    void 	drawFluidFields(){
         drawFluidFields(0,0,drawWidth,drawHeight);
     };
-    void drawFluidFields(int _x, int _y, int _width, int _height);
+    void 	drawFluidFields(int _x, int _y, int _width, int _height);
     
-    void drawFluidObstacle(){
+    void 	drawFluidObstacle(){
         drawFluidObstacle(0,0,drawWidth,drawHeight);
     }
-    void drawFluidObstacle(int _x, int _y, int _width, int _height);
+    void 	drawFluidObstacle(int _x, int _y, int _width, int _height);
     
-    void drawSource(){
+    void 	drawSource(){
         drawSource(0,0,drawWidth,drawHeight);
     }
-    void drawSource(int _x, int _y, int _width, int _height);
+    void 	drawSource(int _x, int _y, int _width, int _height);
     
-    int getDrawWidth();
-    int getDrawHeight();
-    int getFlowWidth();
-    int getFlowHeight();
-    void setDrawWidth(int _w);
-    void setDrawHeight(int _h);
-    void setFlowToDrawRatio(float _ratio);
-    float getFlowToDrawRatio();
+    int 	getDrawWidth();
+    int 	getDrawHeight();
+    int 	getFlowWidth();
+    int 	getFlowHeight();
+    void 	setDrawWidth(int _w);
+    void 	setDrawHeight(int _h);
+    void 	setFlowToDrawRatio(float _ratio);
+    float 	getFlowToDrawRatio();
     
     
-    ftOpticalFlow        opticalFlow;
-    ftVelocityMask        velocityMask;
-    ftFluidSimulation    fluidSimulation;
-    ftParticleFlow        particleFlow;
-    ftVelocityField        velocityField;
-    ftTemperatureField    temperatureField;
-    ftPressureField        pressureField;
-    ftVTField            velocityTemperatureField;
+    ftOpticalFlow        	opticalFlow;
+    ftVelocityMask        	velocityMask;
+    ftFluidSimulation    	fluidSimulation;
+    ftParticleFlow        	particleFlow;
+    ftVelocityField        	velocityField;
+    ftTemperatureField    	temperatureField;
+    ftPressureField        	pressureField;
+    ftVTField            	velocityTemperatureField;
     
     
     // gui
-    ofParameter<int>    drawMode;
-    ofxPanel            gui;
-    void                 setupGui();
-    void                updateGui();
-    void                 drawGui();
-    void                drawModeSetName(int & _value);
-    ofParameter<string> drawName;
-    ofParameter<string> ID;
+    ofParameter<int>    	drawMode;
+    ofxPanel            	gui;
+    void                 	setupGui();
+    void                	updateGui();
+    void                 	drawGui();
+    void                	drawModeSetName(int & _value);
+    ofParameter<string> 	drawName;
+    ofParameter<string> 	ID;
     
-    string                myID;
+    string                	myID;
     
     
     
 private:
-    float ratio;
-    int drawWidth;
-    int drawHeight;
-    int flowWidth;
-    int flowHeight;
+    float 	ratio;
+    int 	drawWidth;
+    int 	drawHeight;
+    int 	flowWidth;
+    int 	flowHeight;
     
     
     

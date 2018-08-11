@@ -15,6 +15,27 @@ MyFlowTools::~MyFlowTools(){
     
 }
 //--------------------------------------------------------------
+void MyFlowTools::clear(){
+	
+	opticalFlow.clear();
+	
+	velocityMask.clear();
+	
+	fluidSimulation.clear();
+	
+	particleFlow.clear();
+	
+	velocityField.clear();
+	
+	temperatureField.clear();
+	
+	pressureField.clear();
+	
+	velocityTemperatureField.clear();
+	
+}
+
+//--------------------------------------------------------------
 
 void MyFlowTools::setup(int _w,int _h,float _ratio,string _id){
     drawWidth = _w;
