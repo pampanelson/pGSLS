@@ -34,18 +34,19 @@ void ofApp::setup(){
 	imitate(overlap,simpleCam);
 	
 	
-	drawWidth = ofGetWindowWidth();
-	drawHeight = ofGetWindowHeight();
+	drawWidth = 800;
+	drawHeight = 600;
+	
 	//    flowWidth = drawWidth;
 	//    flowHeight = drawHeight;
 	
 	
 	float ratio = 2.0;
-	int flowToolsNum = 1;
+	int flowToolsNum = 3;
 	for(int i = 0;i < flowToolsNum;i++){
 		MyFlowTools * f = new MyFlowTools();
 		f->setup(drawWidth, drawHeight, ratio, "myflow_" + ofToString(i));
-//		f->setFlowColor(ofColor(ofRandom(255),ofRandom(255),ofRandom(255)));
+		f->setFlowColor(ofColor(ofRandom(255),ofRandom(255),ofRandom(255)));
 		vecMyFlowTools.push_back(f);
 	}
 
@@ -160,6 +161,10 @@ void ofApp::draw(){
 	if(bDrawGui){
 		
 		gui.draw();
+		for (int i = 0; i < vecMyFlowTools.size(); i++) {
+			vecMyFlowTools[i]->drawGui();
+		}
+		
 		
 	}
 	
