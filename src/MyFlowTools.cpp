@@ -147,7 +147,7 @@ void MyFlowTools::exit(){
 
 void MyFlowTools::setupGui() {
 	
-	gui.setup("MyFlowToolsSettings");
+	gui.setup(myID);
 	//    gui.setDefaultBackgroundColor(ofColor(0, 0, 0, 127));
 	//    gui.setDefaultFillColor(ofColor(160, 160, 160, 160));
 	gui.add(ID.set(myID));
@@ -188,10 +188,11 @@ void MyFlowTools::setupGui() {
 	gui.minimizeAll();
 	
 	// seva setting with give name
-	if (!ofFile("myflowtoolssettings.xml"))
-		gui.saveToFile("myflowtoolssettings.xml");
+	string settingFileName = myID + ".xml";
+	if (!ofFile(settingFileName))
+		gui.saveToFile(settingFileName);
 	
-	gui.loadFromFile("myflowtoolssettings.xml");
+	gui.loadFromFile(settingFileName);
 	
 	
 	

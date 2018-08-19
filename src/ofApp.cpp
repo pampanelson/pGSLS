@@ -40,9 +40,9 @@ void ofApp::setup(){
 	
 	
 	// init parameter for flow tools
-	float ratio = 2.0; // (960,540)
+	float ratio = 4.0; //
 //	float dissipation = 0.05;
-	float speed = 70.0;
+//	float speed = 70.0;
 //	ofVec2f gravity = ofVec2f(0.0,0.0);
 //	float viscocity = 1.0;
 	
@@ -52,7 +52,7 @@ void ofApp::setup(){
 		f->setFlowColor(ofColor(ofRandom(255),ofRandom(255),ofRandom(255)));
 		// set fluid parameters =====================
 //		f->getFluidSimulation().setDissipation(dissipation);
-		f->getFluidSimulation().setSpeed(speed);
+//		f->getFluidSimulation().setSpeed(speed);
 //		f->getFluidSimulation().setGravity(gravity);
 //		f->getFluidSimulation().setViscosity(viscocity);
 		vecMyFlowTools.push_back(f);
