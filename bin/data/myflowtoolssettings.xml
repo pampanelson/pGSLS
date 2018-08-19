@@ -38,7 +38,7 @@
 		<iterations>40</iterations>
 		<viscosity>0.1</viscosity>
 		<vorticity>0.6</vorticity>
-		<dissipation>0.0051</dissipation>
+		<dissipation>0.0251</dissipation>
 		<advanced_dissipation>
 			<velocity_offset>-0.001</velocity_offset>
 			<density_offset>0</density_offset>

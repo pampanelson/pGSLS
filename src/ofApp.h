@@ -82,22 +82,14 @@ public:
 	ofFbo               obsticleFbo;
 	
 
-	
-	// test
-	
-
-	ofImage				obsticleImg; // invert of back image
-	ofImage				backImg; // show rest writtings
-	bool				drawTestImage = false;
-	bool				drawBackImg = true;
-	
-	
-
-	int					curFlowIndex;
-	
+	// shufa
+	ofImage				shufaDiff;
+	ofImage				overlap;
+	ofImage				shufaImg1;
 	
 	
 	ofxPanel			gui;
+	ofParameter<bool> 	bFlipCamera;
 	ofParameter<float> 	threshold;
 	ofParameter<bool> 	trackHs;
 	ofParameter<int>	blackWhiteThreshold;
@@ -108,9 +100,8 @@ public:
 	
 	
 	vector<MyFlowTools *>		vecMyFlowTools;
-	MyFlowTools			f1;
-	MyFlowTools			f2;
-	MyFlowTools			f3;
+	
+	
 
 	void keyPressed(int key);
 	void keyReleased(int key);

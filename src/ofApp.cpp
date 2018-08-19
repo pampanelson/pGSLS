@@ -18,13 +18,21 @@ void ofApp::setup(){
 	
 	fbo.allocate(ofGetWindowWidth(),ofGetWindowHeight(),GL_RGBA);
 	
+	// init shufa
+	shufaImg1.load("shufa1.png");
+	shufaImg1.resize(640, 480);
 	
 	
 	// init camera
 	simpleCam.setup(640, 480, true);
-	didCamUpdate = false;
+	
 	cameraFbo.allocate(640, 480);
 	cameraFbo.black();
+	
+	// init for opencv
+	imitate(shufaDiff,simpleCam);
+	imitate(overlap,simpleCam);
+	
 	
 	drawWidth = ofGetWindowWidth();
 	drawHeight = ofGetWindowHeight();
@@ -32,25 +40,15 @@ void ofApp::setup(){
 	//    flowHeight = drawHeight;
 	
 	
-	float ratio = 1.0;
-
-	for(int i = 0;i < 9;i++){
+	float ratio = 2.0;
+	int flowToolsNum = 1;
+	for(int i = 0;i < flowToolsNum;i++){
 		MyFlowTools * f = new MyFlowTools();
-		f->setup(drawWidth, drawHeight, ratio, "myflow");
-		f->setFlowColor(ofColor(ofRandom(255),ofRandom(255),ofRandom(255)));
+		f->setup(drawWidth, drawHeight, ratio, "myflow_" + ofToString(i));
+//		f->setFlowColor(ofColor(ofRandom(255),ofRandom(255),ofRandom(255)));
 		vecMyFlowTools.push_back(f);
 	}
-//	f1.setup(drawWidth, drawHeight, ratio, "myflow");
-//	f1.setFlowColor(ofColor(ofRandom(255),ofRandom(255),ofRandom(255)));
-//	vecMyFlowTools.push_back(f1);
-//	
-//	f2.setup(drawWidth, drawHeight, ratio, "myflow");
-//	f2.setFlowColor(ofColor(ofRandom(255),ofRandom(255),ofRandom(255)));
-//	vecMyFlowTools.push_back(f2);
-//	
-//	f3.setup(drawWidth, drawHeight, ratio, "myflow");
-//	f3.setFlowColor(ofColor(ofRandom(255),ofRandom(255),ofRandom(255)));
-//	vecMyFlowTools.push_back(f3);
+
 	
 	
 	flowFbo.allocate(drawWidth,drawHeight);
@@ -63,6 +61,7 @@ void ofApp::setup(){
 	// opencv gui
 	gui.add(threshold.set("Threshold", 128, 0, 255));
 	gui.add(trackHs.set("Track Hue/Saturation", false));
+	gui.add(bFlipCamera.set("flip camera", true));
 	gui.add(blackWhiteThreshold.set("black white threshold",0,1,255));
 	gui.add(rmsThreshold.set("rms threshold",0,0.02,1));
 	
@@ -88,17 +87,16 @@ void ofApp::update(){
 	
 	
 	simpleCam.update();
-	//	if (doFlipCamera){
-	//		simpleCam.draw(cameraFbo.getWidth(), 0, -cameraFbo.getWidth(), cameraFbo.getHeight());
-	//
-	//	}  // Flip Horizontal
-	//	else{
-	//		simpleCam.draw(0, 0, cameraFbo.getWidth(), cameraFbo.getHeight());
-	//
-	//	}
-	//
+	if (bFlipCamera.get()){
+		flip(simpleCam, simpleCam, 1);
+	}  // Flip Horizontal
+
 	
+	absdiff(shufaImg1,simpleCam,shufaDiff);
+	shufaDiff.update();
 	
+	subtract(shufaImg1,shufaDiff, overlap);
+	overlap.update();
 	
 	
 	// flow tools =====================================
@@ -106,16 +104,16 @@ void ofApp::update(){
 	ofPushStyle();
 	ofEnableBlendMode(OF_BLENDMODE_DISABLED);
 	flowFbo.begin();
-	if (doFlipCamera){
-		simpleCam.draw(cameraFbo.getWidth(), 0, -cameraFbo.getWidth(), cameraFbo.getHeight());
-		
-	}  // Flip Horizontal
-	else{
-		simpleCam.draw(0, 0, cameraFbo.getWidth(), cameraFbo.getHeight());
-		
-	}
+//	if (doFlipCamera){
+//		simpleCam.draw(cameraFbo.getWidth(), 0, -cameraFbo.getWidth(), cameraFbo.getHeight());
+//
+//	}  // Flip Horizontal
+//	else{
+//		simpleCam.draw(0, 0, cameraFbo.getWidth(), cameraFbo.getHeight());
+//
+//	}
 	
-	
+	overlap.draw(0, 0, cameraFbo.getWidth(), cameraFbo.getHeight());
 	
 	
 	flowFbo.end();
@@ -134,33 +132,18 @@ void ofApp::update(){
 	
 	
 	
-	curFlowIndex = int(ofGetElapsedTimef()) % vecMyFlowTools.size();
 	
-	for(int i = 0;i < vecMyFlowTools.size();i++){
-		if(i == curFlowIndex){
-			vecMyFlowTools[i]->update(&flowFbo, &obsticleFbo);
+	
+	for (int i = 0; i < vecMyFlowTools.size(); i++) {
 
-		}else{
-			vecMyFlowTools[i]->update(&obsticleFbo, &obsticleFbo);
-		}
+		// need delete/release reource very carefully ++++++++++++++++++++++++++++++
+		//if(!vecMyFlowTools[i].isActive()){
+			//			vecMyFlowTools.erase(vecMyFlowTools.begin() + i);
+
+		//}
+		vecMyFlowTools[i]->update(&flowFbo, &obsticleFbo);
 	}
-	
-	
-	
-//	for (int i = 0; i < vecMyFlowTools.size(); i++) {
-//
-//		// need delete/release reource very carefully ++++++++++++++++++++++++++++++
-//		if(!vecMyFlowTools[i].isActive()){
-//			//			vecMyFlowTools.erase(vecMyFlowTools.begin() + i);
-//
-//		}
-//		vecMyFlowTools[i].update(&flowFbo, &obsticleFbo);
-//	}
-//
-//
-//	flowTools1.update(&flowFbo,&obsticleFbo);
-	
-	
+
 	
 }
 
@@ -169,17 +152,11 @@ void ofApp::draw(){
 	
 	
 	
-	
-	//	if(drawBackImg){
-	//		imgTest1.draw(0,0);
-	//	}
-	
-	
 	for (int i = 0; i < vecMyFlowTools.size(); i++) {
 		vecMyFlowTools[i]->drawColorFlow();
 	}
 	
-	
+//	overlap.draw(0,0);
 	if(bDrawGui){
 		
 		gui.draw();
