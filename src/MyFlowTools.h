@@ -82,6 +82,7 @@ public:
     }
     void 	drawSource(int _x, int _y, int _width, int _height);
 	
+	
 	bool	isActive();
     int 	getDrawWidth();
     int 	getDrawHeight();
@@ -95,7 +96,12 @@ public:
     
     ftOpticalFlow        	opticalFlow;
     ftVelocityMask        	velocityMask;
-    ftFluidSimulation    	fluidSimulation;
+	ftFluidSimulation    	fluidSimulation;
+	ftFluidSimulation    	getFluidSimulation(){
+		return fluidSimulation;
+	};
+	
+	
     ftParticleFlow        	particleFlow;
     ftVelocityField        	velocityField;
     ftTemperatureField    	temperatureField;

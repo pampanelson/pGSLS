@@ -33,11 +33,13 @@ void ofApp::setup(){
 	
 	
 	float ratio = 1.0;
-
+	float dissipation = 0.005;
 	for(int i = 0;i < 9;i++){
 		MyFlowTools * f = new MyFlowTools();
 		f->setup(drawWidth, drawHeight, ratio, "myflow");
 		f->setFlowColor(ofColor(ofRandom(255),ofRandom(255),ofRandom(255)));
+		// set fluid parameters =====================
+//		f->getFluidSimulation().setDissipation(dissipation);
 		vecMyFlowTools.push_back(f);
 	}
 //	f1.setup(drawWidth, drawHeight, ratio, "myflow");
