@@ -4,6 +4,7 @@
 	<Track_Hue_Saturation>0</Track_Hue_Saturation>
 	<black_white_threshold>0</black_white_threshold>
 	<rms_threshold>0.0422988</rms_threshold>
+	<flip_cam>1</flip_cam>
 </settings>
 <MyFlowToolsSettings>
 	<UnknownName />
@@ -142,7 +143,7 @@
 	</velocity_mask>
 </myflow_2>
 <myflow_0>
-	<UnknownName></UnknownName>
+	<UnknownName />
 	<draw_mode>1</draw_mode>
 	<MODE>Composite</MODE>
 	<particle_flow>

@@ -64,7 +64,16 @@ public:
 	//opencv
 
 	ofPixels 			previous;
-	ofImage 			diff;
+	ofImage 			camDiff;
+	ofImage				shufaDiff;
+	ofImage				overlap;
+	ofImage				shufaImg1;
+
+	
+
+
+	
+	
 	
 	// a scalar is like an ofVec4f but normally used for storing color information
 	cv::Scalar diffMean;
@@ -109,6 +118,7 @@ public:
 	ofxPanel			gui;
 	ofParameter<float> 	threshold;
 	ofParameter<bool> 	bFlipCam;
+	ofParameter<bool> 	bUseCamDiff;
 	ofParameter<int>	blackWhiteThreshold;
 	ofParameter<float>	rmsThreshold;
 	

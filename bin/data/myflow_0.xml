@@ -33,12 +33,12 @@
 	</optical_flow>
 	<fluid_solver>
 		<reset>0</reset>
-		<speed>20</speed>
+		<speed>50</speed>
 		<cell_size>1.25</cell_size>
 		<iterations>40</iterations>
 		<viscosity>0.1</viscosity>
 		<vorticity>0.6</vorticity>
-		<dissipation>0.01</dissipation>
+		<dissipation>0.5</dissipation>
 		<advanced_dissipation>
 			<velocity_offset>-0.001</velocity_offset>
 			<density_offset>0</density_offset>

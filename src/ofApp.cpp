@@ -18,11 +18,14 @@ void ofApp::setup(){
 	
 //	fbo.allocate(ofGetWindowWidth(),ofGetWindowHeight(),GL_RGBA);
 	
-	
-	
+	shufaImg1.load("shufa1.png");
+	shufaImg1.resize(640, 480);
+		
 	// init camera
 	simpleCam.setup(640, 480, true);
 	didCamUpdate = false;
+	
+	
 	cameraFbo.allocate(640, 480);
 	cameraFbo.black();
 	
@@ -34,8 +37,9 @@ void ofApp::setup(){
 	
 	// opencv
 	imitate(previous, simpleCam);
-	imitate(diff, simpleCam);
-	
+	imitate(camDiff, simpleCam);
+	imitate(shufaDiff,simpleCam);
+	imitate(overlap,simpleCam);
 	
 	
 	
@@ -46,7 +50,7 @@ void ofApp::setup(){
 //	ofVec2f gravity = ofVec2f(0.0,0.0);
 //	float viscocity = 1.0;
 	
-	for(int i = 0;i < 3;i++){
+	for(int i = 0;i < 1;i++){
 		MyFlowTools * f = new MyFlowTools();
 		f->setup(drawWidth, drawHeight, ratio, "myflow_" + ofToString(i));
 		f->setFlowColor(ofColor(ofRandom(255),ofRandom(255),ofRandom(255)));
@@ -76,6 +80,7 @@ void ofApp::setup(){
 	// opencv gui
 	gui.add(threshold.set("Threshold", 128, 0, 255));
 	gui.add(bFlipCam.set("flip cam", true));
+	gui.add(bUseCamDiff.set("use cam diff", true));
 	gui.add(blackWhiteThreshold.set("black white threshold",0,1,255));
 	gui.add(rmsThreshold.set("rms threshold",0,0.02,1));
 	
@@ -102,30 +107,50 @@ void ofApp::update(){
 	
 	simpleCam.update();
 
-	// opencv diff
-	// take the absolute difference of prev and cam and save it inside diff
-	absdiff(simpleCam, previous, diff);
-	diff.update();
+	if(simpleCam.isFrameNew()){
+
+		if (bFlipCam.get()){
+			flip(simpleCam,simpleCam,1);// flip horizontal
+			simpleCam.update();
+			
+			
+			if(bUseCamDiff.get()){
+				// opencv diff
+				// take the absolute difference of prev and cam and save it inside diff
+				absdiff(simpleCam, previous, camDiff);
+				camDiff.update();
+				
+				// like ofSetPixels, but more concise and cross-toolkit
+				copy(simpleCam, previous);
+				
+				absdiff(shufaImg1,camDiff,shufaDiff);
+			}else{
+				absdiff(shufaImg1,simpleCam,shufaDiff);
+
+				
+			}
+
 	
-	// like ofSetPixels, but more concise and cross-toolkit
-	copy(simpleCam, previous);
-	
-	
-	
-	
+			shufaDiff.update();
+
+			subtract(shufaImg1,shufaDiff, overlap);
+			overlap.update();
+			
+
+		}
+
+		
+
+		
+	}
+
+
 	// flow tools =====================================
 
 	ofPushStyle();
 	ofEnableBlendMode(OF_BLENDMODE_DISABLED);
 	flowFbo.begin();
-	if (bFlipCam.get()){
-		simpleCam.draw(cameraFbo.getWidth(), 0, -cameraFbo.getWidth(), cameraFbo.getHeight());
-
-	}  // Flip Horizontal
-	else{
-		simpleCam.draw(0, 0, cameraFbo.getWidth(), cameraFbo.getHeight());
-
-	}
+	overlap.draw(0, 0, cameraFbo.getWidth(), cameraFbo.getHeight());
 	flowFbo.end();
 	ofPopStyle();
 
@@ -143,7 +168,7 @@ void ofApp::update(){
 	for (int i = 0; i < vecMyFlowTools.size(); i++) {
 		vecMyFlowTools[i]->update(&flowFbo, &obsticleFbo);
 	}
-	
+
 }
 
 //--------------------------------------------------------------
@@ -151,16 +176,19 @@ void ofApp::draw(){
 	
 	
 	syphonFbo.begin();
-//	ofColor(0,0,0);
+	ofColor(0,0,0);
 	
 	for (int i = 0; i < vecMyFlowTools.size(); i++) {
 		vecMyFlowTools[i]->drawColorFlow();
 	}
-	
+
 	syphonFbo.end();
 	syphonServer.publishTexture(&syphonFbo.getTexture());
 	
-	diff.draw(0, 0);
+	camDiff.draw(0, 0);
+	
+	overlap.draw(300, 0);
+	
 	
 	if(bDrawGui){
 		
