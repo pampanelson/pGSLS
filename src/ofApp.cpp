@@ -16,7 +16,7 @@ void ofApp::setup(){
 	// white background color
 	ofSetBackgroundColor(255, 255, 255);
 	
-	fbo.allocate(ofGetWindowWidth(),ofGetWindowHeight(),GL_RGBA);
+//	fbo.allocate(ofGetWindowWidth(),ofGetWindowHeight(),GL_RGBA);
 	
 	
 	
@@ -26,37 +26,48 @@ void ofApp::setup(){
 	cameraFbo.allocate(640, 480);
 	cameraFbo.black();
 	
-	drawWidth = ofGetWindowWidth();
-	drawHeight = ofGetWindowHeight();
-	//    flowWidth = drawWidth;
-	//    flowHeight = drawHeight;
+//	drawWidth = ofGetWindowWidth();
+//	drawHeight = ofGetWindowHeight();
+	
+	drawWidth = 1024;
+	drawHeight = 768;
+	
+	// opencv
+	imitate(previous, simpleCam);
+	imitate(diff, simpleCam);
 	
 	
-	float ratio = 1.0;
-	float dissipation = 0.005;
-	for(int i = 0;i < 9;i++){
+	
+	
+	// init parameter for flow tools
+	float ratio = 2.0; // (960,540)
+//	float dissipation = 0.05;
+	float speed = 70.0;
+//	ofVec2f gravity = ofVec2f(0.0,0.0);
+//	float viscocity = 1.0;
+	
+	for(int i = 0;i < 3;i++){
 		MyFlowTools * f = new MyFlowTools();
-		f->setup(drawWidth, drawHeight, ratio, "myflow");
+		f->setup(drawWidth, drawHeight, ratio, "myflow_" + ofToString(i));
 		f->setFlowColor(ofColor(ofRandom(255),ofRandom(255),ofRandom(255)));
 		// set fluid parameters =====================
 //		f->getFluidSimulation().setDissipation(dissipation);
+		f->getFluidSimulation().setSpeed(speed);
+//		f->getFluidSimulation().setGravity(gravity);
+//		f->getFluidSimulation().setViscosity(viscocity);
 		vecMyFlowTools.push_back(f);
 	}
-//	f1.setup(drawWidth, drawHeight, ratio, "myflow");
-//	f1.setFlowColor(ofColor(ofRandom(255),ofRandom(255),ofRandom(255)));
-//	vecMyFlowTools.push_back(f1);
-//	
-//	f2.setup(drawWidth, drawHeight, ratio, "myflow");
-//	f2.setFlowColor(ofColor(ofRandom(255),ofRandom(255),ofRandom(255)));
-//	vecMyFlowTools.push_back(f2);
-//	
-//	f3.setup(drawWidth, drawHeight, ratio, "myflow");
-//	f3.setFlowColor(ofColor(ofRandom(255),ofRandom(255),ofRandom(255)));
-//	vecMyFlowTools.push_back(f3);
-	
 	
 	flowFbo.allocate(drawWidth,drawHeight);
 	obsticleFbo.allocate(drawWidth,drawHeight);
+	
+	
+	
+	// syphon
+	
+	syphonServerName = "pGSLS";
+	syphonServer.setName(syphonServerName);
+	syphonFbo.allocate(drawWidth, drawHeight);
 	
 	
 	
@@ -64,7 +75,7 @@ void ofApp::setup(){
 	
 	// opencv gui
 	gui.add(threshold.set("Threshold", 128, 0, 255));
-	gui.add(trackHs.set("Track Hue/Saturation", false));
+	gui.add(bFlipCam.set("flip cam", true));
 	gui.add(blackWhiteThreshold.set("black white threshold",0,1,255));
 	gui.add(rmsThreshold.set("rms threshold",0,0.02,1));
 	
@@ -90,79 +101,48 @@ void ofApp::update(){
 	
 	
 	simpleCam.update();
-	//	if (doFlipCamera){
-	//		simpleCam.draw(cameraFbo.getWidth(), 0, -cameraFbo.getWidth(), cameraFbo.getHeight());
-	//
-	//	}  // Flip Horizontal
-	//	else{
-	//		simpleCam.draw(0, 0, cameraFbo.getWidth(), cameraFbo.getHeight());
-	//
-	//	}
-	//
+
+	// opencv diff
+	// take the absolute difference of prev and cam and save it inside diff
+	absdiff(simpleCam, previous, diff);
+	diff.update();
+	
+	// like ofSetPixels, but more concise and cross-toolkit
+	copy(simpleCam, previous);
 	
 	
 	
 	
 	// flow tools =====================================
-	
+
 	ofPushStyle();
 	ofEnableBlendMode(OF_BLENDMODE_DISABLED);
 	flowFbo.begin();
-	if (doFlipCamera){
+	if (bFlipCam.get()){
 		simpleCam.draw(cameraFbo.getWidth(), 0, -cameraFbo.getWidth(), cameraFbo.getHeight());
-		
+
 	}  // Flip Horizontal
 	else{
 		simpleCam.draw(0, 0, cameraFbo.getWidth(), cameraFbo.getHeight());
-		
+
 	}
-	
-	
-	
-	
 	flowFbo.end();
-	
 	ofPopStyle();
-	
-	
-	
-	
+
+
+
+
 	ofPushStyle();
 	ofEnableBlendMode(OF_BLENDMODE_DISABLED);
 	obsticleFbo.begin();
 	//obsticleImg.draw(0, 0);
 	obsticleFbo.end();
 	ofPopStyle();
-	
-	
-	
-	curFlowIndex = int(ofGetElapsedTimef()) % vecMyFlowTools.size();
-	
-	for(int i = 0;i < vecMyFlowTools.size();i++){
-		if(i == curFlowIndex){
-			vecMyFlowTools[i]->update(&flowFbo, &obsticleFbo);
 
-		}else{
-			vecMyFlowTools[i]->update(&obsticleFbo, &obsticleFbo);
-		}
+
+	for (int i = 0; i < vecMyFlowTools.size(); i++) {
+		vecMyFlowTools[i]->update(&flowFbo, &obsticleFbo);
 	}
-	
-	
-	
-//	for (int i = 0; i < vecMyFlowTools.size(); i++) {
-//
-//		// need delete/release reource very carefully ++++++++++++++++++++++++++++++
-//		if(!vecMyFlowTools[i].isActive()){
-//			//			vecMyFlowTools.erase(vecMyFlowTools.begin() + i);
-//
-//		}
-//		vecMyFlowTools[i].update(&flowFbo, &obsticleFbo);
-//	}
-//
-//
-//	flowTools1.update(&flowFbo,&obsticleFbo);
-	
-	
 	
 }
 
@@ -170,21 +150,24 @@ void ofApp::update(){
 void ofApp::draw(){
 	
 	
-	
-	
-	//	if(drawBackImg){
-	//		imgTest1.draw(0,0);
-	//	}
-	
+	syphonFbo.begin();
+//	ofColor(0,0,0);
 	
 	for (int i = 0; i < vecMyFlowTools.size(); i++) {
 		vecMyFlowTools[i]->drawColorFlow();
 	}
 	
+	syphonFbo.end();
+	syphonServer.publishTexture(&syphonFbo.getTexture());
+	
+	diff.draw(0, 0);
 	
 	if(bDrawGui){
 		
 		gui.draw();
+		for (int i = 0; i < vecMyFlowTools.size(); i++) {
+			vecMyFlowTools[i]->drawGui();
+		}
 		
 	}
 	

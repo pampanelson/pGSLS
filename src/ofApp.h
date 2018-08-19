@@ -3,9 +3,12 @@
 #include "ofMain.h"
 #include "ofxGui.h"
 #include "ofxCv.h"
+#include "ofxOpenCv.h"
 //#include "ofxFlowTools.h"
 #include "MyFlowTools.h"
 #include "ofxFft.h"
+#include "ofxSyphon.h"
+
 
 
 
@@ -57,6 +60,14 @@ public:
 	ftFbo				cameraFbo;
 	ofParameter<bool>	doFlipCamera;
 	
+	
+	//opencv
+
+	ofPixels 			previous;
+	ofImage 			diff;
+	
+	// a scalar is like an ofVec4f but normally used for storing color information
+	cv::Scalar diffMean;
 
 	
 	// for debug contour =======================
@@ -77,41 +88,32 @@ public:
 	ofFbo				fbo;
 	ofPixels			fboPixels;
 	ofImage				fboImg;
-	
 	ofFbo               flowFbo;
 	ofFbo               obsticleFbo;
-	
 
-	
-	// test
-	
-
-	ofImage				obsticleImg; // invert of back image
-	ofImage				backImg; // show rest writtings
-	bool				drawTestImage = false;
-	bool				drawBackImg = true;
-	
-	
-
-	int					curFlowIndex;
-	
-	
-	
-	ofxPanel			gui;
-	ofParameter<float> 	threshold;
-	ofParameter<bool> 	trackHs;
-	ofParameter<int>	blackWhiteThreshold;
-	ofParameter<float>	rmsThreshold;
 	
 
 	bool				bDrawGui = true;
 	
 	
 	vector<MyFlowTools *>		vecMyFlowTools;
-	MyFlowTools			f1;
-	MyFlowTools			f2;
-	MyFlowTools			f3;
 
+	
+	
+	// syphon out server
+	ofxSyphonServer		syphonServer;
+	string				syphonServerName;
+	ofFbo				syphonFbo;
+	
+	
+	ofxPanel			gui;
+	ofParameter<float> 	threshold;
+	ofParameter<bool> 	bFlipCam;
+	ofParameter<int>	blackWhiteThreshold;
+	ofParameter<float>	rmsThreshold;
+	
+	
+	
 	void keyPressed(int key);
 	void keyReleased(int key);
 	void mouseMoved(int x, int y );

@@ -8,3 +8,4 @@ ofxGui
 ofxNetwork
 ofxOpenCv
 ofxSoundObjects-master
+ofxSyphon
