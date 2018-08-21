@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <myflow_0>
 	<UnknownName>myflow_0</UnknownName>
-	<draw_mode>1</draw_mode>
+	<draw_mode>0</draw_mode>
 	<MODE>draw name</MODE>
 	<particle_flow>
-		<active>0</active>
+		<active>1</active>
 		<particle_color>0, 0, 0, 255</particle_color>
 		<speed>20</speed>
 		<cell_size>1.25</cell_size>

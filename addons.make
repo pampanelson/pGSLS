@@ -5,6 +5,8 @@ ofxCv-master
 ofxFft
 ofxFlowTools
 ofxGui
+ofxKinect
 ofxNetwork
 ofxOpenCv
 ofxSoundObjects-master
+ofxSyphon

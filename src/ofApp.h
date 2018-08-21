@@ -3,11 +3,16 @@
 #include "ofMain.h"
 #include "ofxGui.h"
 #include "ofxCv.h"
+#include "ofxOpenCv.h"
 //#include "ofxFlowTools.h"
 #include "MyFlowTools.h"
 #include "ofxFft.h"
+#include "ofxSyphon.h"
+#include "ofxKinect.h"
 
 
+using namespace cv;
+using namespace ofxCv;
 
 class Scheduler : public ofThread {
 public:
@@ -57,7 +62,29 @@ public:
 	ftFbo				cameraFbo;
 	ofParameter<bool>	doFlipCamera;
 	
+	
+	// kinect --------
+	ofxKinect 			kinect;
 
+	ofxCvColorImage colorImg;
+	
+	ofxCvGrayscaleImage grayImage; // grayscale depth image
+	ofxCvGrayscaleImage grayThreshNear; // the near thresholded image
+	ofxCvGrayscaleImage grayThreshFar; // the far thresholded image
+	
+	ofxCvContourFinder contourFinder;
+	
+	bool bThreshWithOpenCV;
+	bool bDrawPointCloud;
+	
+	int nearThreshold;
+	int farThreshold;
+	
+	int angle;
+	
+	
+	
+	
 	
 	// for debug contour =======================
 	
@@ -88,9 +115,18 @@ public:
 	ofImage				shufaImg1;
 	
 	
+	ofPixels 			previous;
+	ofImage				diff;
+	cv::Scalar 			diffMean;
+	float				diffValue;
+
+	
 	ofxPanel			gui;
 	ofParameter<bool> 	bFlipCamera;
 	ofParameter<float> 	threshold;
+	ofParameter<float> 	diffThreshold;
+
+
 	ofParameter<bool> 	trackHs;
 	ofParameter<int>	blackWhiteThreshold;
 	ofParameter<float>	rmsThreshold;
