@@ -12,6 +12,10 @@
 	<kinect1_near>166</kinect1_near>
 	<kinect1_far>1</kinect1_far>
 	<kinect1_angle>24</kinect1_angle>
+	<fluid_gravity_y>0</fluid_gravity_y>
+	<rms_factor__dissipation>85.2361</rms_factor__dissipation>
+	<default__dissipation>0.00866555</default__dissipation>
+	<rms_damper__dissipation>0</rms_damper__dissipation>
 </settings>
 <MyFlowToolsSettings>
 	<UnknownName />

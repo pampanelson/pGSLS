@@ -145,7 +145,9 @@ public:
 	ofParameter<bool> 	bFlipCamera;
 	ofParameter<float> 	threshold;
 	ofParameter<float> 	diffThreshold;
-	ofParameter<float> 	diffValueFactorForDissipation;
+	ofParameter<float> 	defaultDissipation;
+	ofParameter<float> 	rmsFactorForDissipation;
+	ofParameter<float> 	rmsDamperForDissipation;
 	ofParameter<float> 	dissipationTopValue;
 	ofParameter<float> 	fluidGravityY;
 

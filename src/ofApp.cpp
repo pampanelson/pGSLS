@@ -84,12 +84,11 @@ void ofApp::setup(){
 	ofSoundStreamSettings settings;
 	
 	// if you want to set the device id to be different than the default
-	//	 auto devices = soundStream.getDeviceList();
-	//	 settings.device = devices[0];
+//	auto devices = soundStream.getDeviceList();
+//	settings.device = devices[0];
 	
 	// you can also get devices for an specific api
 	// auto devices = soundStream.getDevicesByApi(ofSoundDevice::Api::PULSE);
-	// settings.device = devices[0];
 	
 	// or get the default device for an specific api:
 	// settings.api = ofSoundDevice::Api::PULSE;
@@ -139,6 +138,7 @@ void ofApp::setup(){
 		
 		f->particleFlow.activate(false);
 //		f->getFluidSimulation().setGravity(ofVec2f(0.0,9.8));
+		f->getFluidSimulation().setDissipation(defaultDissipation.get());
 		vecMyFlowTools.push_back(f);
 	}
 	
@@ -169,7 +169,9 @@ void ofApp::setup(){
 	gui.add(threshold.set("Threshold", 128, 0, 255));
 	gui.add(fluidGravityY.set("fluid gravity y", 0, 1, 500));
 	gui.add(diffThreshold.set("diff Threshold", 0, 1, 60));
-	gui.add(diffValueFactorForDissipation.set("diff dissipation", 1, 10, 1000));
+	gui.add(defaultDissipation.set("default  dissipation",0,0.0001,1));
+	gui.add(rmsFactorForDissipation.set("rms factor  dissipation", 100,10, 1000));
+	gui.add(rmsDamperForDissipation.set("rms damper  dissipation", 0,0.001,1));
 	gui.add(dissipationTopValue.set("dissipation top value", 0.001, 0.0001, 0.1));
 
 	gui.add(trackHs.set("Track Hue/Saturation", false));
@@ -370,8 +372,14 @@ void ofApp::update(){
 		
 		vecMyFlowTools[i]->getFluidSimulation().setGravity(ofVec2f(0.0,fluidGravityY.get()));
 
+		float dissipationDelta = rms / rmsFactorForDissipation.get() - rmsDamperForDissipation.get();
+		
+		if(dissipationDelta < 0){
+			dissipationDelta = 0;
+		}
 		
 		
+		vecMyFlowTools[i]->getFluidSimulation().setDissipation(defaultDissipation.get() + dissipationDelta);
 		vecMyFlowTools[i]->update(&flowFbo, &obsticleFbo);
 
 	}
