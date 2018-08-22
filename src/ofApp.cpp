@@ -167,7 +167,7 @@ void ofApp::setup(){
 	
 	// opencv gui
 	gui.add(threshold.set("Threshold", 128, 0, 255));
-	gui.add(fluidGravityY.set("fluid gravity y", 0, 1, 500));
+	gui.add(fluidGravityY.set("fluid gravity y", 0, 1, 1500));
 	gui.add(diffThreshold.set("diff Threshold", 0, 1, 60));
 	gui.add(defaultDissipation.set("default  dissipation",0,0.0001,1));
 	gui.add(rmsFactorForDissipation.set("rms factor  dissipation", 100,10, 1000));
@@ -379,7 +379,7 @@ void ofApp::update(){
 		}
 		
 		
-		vecMyFlowTools[i]->getFluidSimulation().setDissipation(defaultDissipation.get() + dissipationDelta);
+//		vecMyFlowTools[i]->getFluidSimulation().setDissipation(defaultDissipation.get() + dissipationDelta);
 		vecMyFlowTools[i]->update(&flowFbo, &obsticleFbo);
 
 	}
