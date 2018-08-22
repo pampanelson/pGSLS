@@ -11,8 +11,8 @@ void ofApp::setup(){
 	
 	
 	
-	drawWidth = 1550;
-	halfDrawWidth = 640;
+	drawWidth = 640;
+//	halfDrawWidth = 640;
 	
 	drawHeight = 512;
 	
