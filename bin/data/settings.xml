@@ -7,7 +7,11 @@
 	<diff_Threshold>7.785</diff_Threshold>
 	<diff_dissipation>1000</diff_dissipation>
 	<flip_camera>1</flip_camera>
-	<dissipation_top_value>0.0189503</dissipation_top_value>
+	<dissipation_top_value>0.0249618</dissipation_top_value>
+	<thresh_with_opencv>1</thresh_with_opencv>
+	<kinect1_near>106</kinect1_near>
+	<kinect1_far>8</kinect1_far>
+	<kinect1_angle>22</kinect1_angle>
 </settings>
 <MyFlowToolsSettings>
 	<UnknownName />

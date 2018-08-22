@@ -64,29 +64,14 @@ public:
 	
 	
 	// kinect --------
-	ofxKinect 			kinect;
+	ofxKinect 			kinect1;
 
-	ofxCvColorImage colorImg;
-	
-	ofxCvGrayscaleImage grayImage; // grayscale depth image
-	ofxCvGrayscaleImage grayThreshNear; // the near thresholded image
-	ofxCvGrayscaleImage grayThreshFar; // the far thresholded image
-	
-	ofxCvContourFinder contourFinder;
-	
-	bool bThreshWithOpenCV;
-	bool bDrawPointCloud;
-	
-	int nearThreshold;
-	int farThreshold;
-	
-	int angle;
-	
-	
-	
-	
-	
-	// for debug contour =======================
+	ofxCvColorImage 		colorImg;
+	ofxCvGrayscaleImage 	k1GrayImage; // grayscale depth image
+	ofxCvGrayscaleImage 	k1GrayImageThreshNear; // the near thresholded image
+	ofxCvGrayscaleImage 	k1GrayImageThreshFar; // the far thresholded image
+
+
 	
 	
 	// Time
@@ -99,6 +84,31 @@ public:
 	int					flowHeight;
 	int					drawWidth;
 	int					drawHeight;
+	
+	
+	//sound
+	void 				audioIn(ofSoundBuffer &inBuffer);
+	void				showAudioDebug();
+	//	void				audioIn(float *input, int bufferSize, int nChannels);
+	ofSoundStream 		soundStream;
+	ofSoundBuffer 		audioInSoundBuffer;
+	ofSoundBuffer		chennalBuffer;
+	
+	
+//	ofxFft* 			fft;
+//	float * 			fftData;
+	
+	float 				rms;
+	float 				power;
+	
+	vector <float> 		left;
+	vector <float> 		right;
+	
+	
+	
+	
+	
+	
 	
 	
 	// syphon
@@ -134,6 +144,11 @@ public:
 	ofParameter<float> 	diffValueFactorForDissipation;
 	ofParameter<float> 	dissipationTopValue;
 
+	ofParameter<int>	k1GrayThreshNear;
+	ofParameter<int>	k1GrayThreshFar;
+	
+	ofParameter<bool> 		bThreshWithOpenCV;
+	ofParameter<int>  		k1Angle;
 
 
 	ofParameter<bool> 	trackHs;
