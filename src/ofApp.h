@@ -101,10 +101,15 @@ public:
 	int					drawHeight;
 	
 	
-	ofFbo				fbo;
+	// syphon
+	ofFbo				syphonFbo;
 	ofPixels			fboPixels;
 	ofImage				fboImg;
 	
+	ofxSyphonServer		syphonServer;
+	
+	
+	// flow
 	ofFbo               flowFbo;
 	ofFbo               obsticleFbo;
 	

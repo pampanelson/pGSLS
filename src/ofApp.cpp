@@ -10,6 +10,10 @@ void ofApp::setup(){
 	ofSetVerticalSync(true);
 	
 	
+	
+	drawWidth = 800;
+	drawHeight = 600;
+	
 	// kinect
 	// enable depth->video image calibration
 	kinect.setRegistration(true);
@@ -53,7 +57,6 @@ void ofApp::setup(){
 	// white background color
 	ofSetBackgroundColor(255, 255, 255);
 	
-//	fbo.allocate(ofGetWindowWidth(),ofGetWindowHeight(),GL_RGBA);
 	
 	// init shufa
 	shufaImg1.load("shufa1.png");
@@ -74,9 +77,7 @@ void ofApp::setup(){
 	imitate(previous, simpleCam);
 	imitate(diff, simpleCam);
 	
-	
-	drawWidth = 800;
-	drawHeight = 600;
+
 	
 	//    flowWidth = drawWidth;
 	//    flowHeight = drawHeight;
@@ -97,6 +98,12 @@ void ofApp::setup(){
 	
 	flowFbo.allocate(drawWidth,drawHeight);
 	obsticleFbo.allocate(drawWidth,drawHeight);
+	
+	
+	
+	// syphon
+	syphonFbo.allocate(drawWidth,drawHeight,GL_RGBA);
+	syphonServer.setName("pGSLS");
 	
 	
 	
@@ -302,12 +309,19 @@ void ofApp::update(){
 void ofApp::draw(){
 	
 	
-	
+	syphonFbo.begin();
+	ofClear(255, 255, 255);
 	
 	
 	for (int i = 0; i < vecMyFlowTools.size(); i++) {
 		vecMyFlowTools[i]->drawColorFlow();
 	}
+	
+	syphonFbo.end();
+	
+	
+	syphonServer.publishTexture(&syphonFbo.getTexture());
+	
 	
 //	kinect.drawDepth(0,0);
 //	kinect.draw(0, 0);
