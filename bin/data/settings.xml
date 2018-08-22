@@ -4,6 +4,10 @@
 	<Track_Hue_Saturation>0</Track_Hue_Saturation>
 	<black_white_threshold>0</black_white_threshold>
 	<rms_threshold>0.0422988</rms_threshold>
+	<diff_Threshold>7.785</diff_Threshold>
+	<diff_dissipation>1000</diff_dissipation>
+	<flip_camera>1</flip_camera>
+	<dissipation_top_value>0.0145855</dissipation_top_value>
 </settings>
 <MyFlowToolsSettings>
 	<UnknownName />

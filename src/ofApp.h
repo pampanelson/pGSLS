@@ -119,12 +119,16 @@ public:
 	ofImage				diff;
 	cv::Scalar 			diffMean;
 	float				diffValue;
+	
 
 	
 	ofxPanel			gui;
 	ofParameter<bool> 	bFlipCamera;
 	ofParameter<float> 	threshold;
 	ofParameter<float> 	diffThreshold;
+	ofParameter<float> 	diffValueFactorForDissipation;
+	ofParameter<float> 	dissipationTopValue;
+
 
 
 	ofParameter<bool> 	trackHs;
