@@ -52,6 +52,8 @@ public:
 	void draw();
 	void exit();
 
+	void				goNextFlow();
+
 	
 	Scheduler               myTimer;
 
@@ -63,15 +65,6 @@ public:
 	ofParameter<bool>	doFlipCamera;
 	
 	
-	// kinect --------
-	ofxKinect 			kinect1;
-
-	ofxCvColorImage 		colorImg;
-	ofxCvGrayscaleImage 	k1GrayImage; // grayscale depth image
-	ofxCvGrayscaleImage 	k1GrayImageThreshNear; // the near thresholded image
-	ofxCvGrayscaleImage 	k1GrayImageThreshFar; // the far thresholded image
-
-
 	
 	
 	// Time
@@ -105,10 +98,26 @@ public:
 	vector <float> 		right;
 	
 	
+	// opencv
+	ofxCv::ContourFinder 	contourFinder;
+	ofColor 				targetColor;
+	ofImage					grayImg;
 	
+	int					contourIndex = -1;
+
+	vector<vector<cv::Point>>  contourBlobs;
+	vector<ofImage>		vecContourBlobImagesForFlow;
+	vector<ofVec4f>		vecContourBlobImagesBoudingBox;
+	int					drawImageForFlowMilSecs = 1000;
+	int					deltaSpeedFactor = 20;// how fast a contour blob move for make flow,smaller is quicker
+	vector<int>			vecDrawImageForFlowOnce;
 	
+
 	
-	
+	// shufa
+	ofImage				shufaImg;
+	ofImage				obsticleImg; // invert of back image
+	ofImage				backImg; // show rest writtings
 	
 	
 	// syphon
@@ -123,43 +132,30 @@ public:
 	ofFbo               flowFbo;
 	ofFbo               obsticleFbo;
 	
+	MyFlowTools			myFlowTools;
+	float				ratio;
 
-	// shufa
-	ofImage				shufaDiff;
-	ofImage				overlap;
-	ofImage				shufaImg1;
-	
-	
-	ofPixels 			previous;
-	ofImage				diff;
-	cv::Scalar 			diffMean;
-	float				diffValue;
-	
 
 	
 	ofxPanel			gui;
-	ofParameter<bool> 	bFlipCamera;
-	ofParameter<float> 	threshold;
-	ofParameter<float> 	diffThreshold;
-	ofParameter<float> 	diffValueFactorForDissipation;
-	ofParameter<float> 	dissipationTopValue;
 
-	ofParameter<int>	k1GrayThreshNear;
-	ofParameter<int>	k1GrayThreshFar;
-	
-	ofParameter<bool> 		bThreshWithOpenCV;
-	ofParameter<int>  		k1Angle;
 
 
 	ofParameter<bool> 	trackHs;
-	ofParameter<int>	blackWhiteThreshold;
+	ofParameter<float> 	threshold;
+
 	ofParameter<float>	rmsThreshold;
 	
-
+	ofParameter<bool> 	bStartFlow;
+	ofParameter<bool> 	bContourFinderUpdate;
+	ofParameter<bool> 	bShowContour;
+	ofParameter<int>	blackWhiteThreshold;
+	
+	
 	bool				bDrawGui = true;
 	
 	
-	vector<MyFlowTools *>		vecMyFlowTools;
+	
 	
 	
 

@@ -12,33 +12,7 @@ void ofApp::setup(){
 	
 	
 	drawWidth = 800;
-	drawHeight = 600;
-	
-
-	// setup k1
-	kinect1.setRegistration(true);
-	//	kinect1.init();
-	//kinect.init(true); // shows infrared instead of RGB video image
-	kinect1.init(false, false); // disable video image (faster fps)
-	
-	kinect1.open();		// opens first available kinect
-	//kinect.open(1);	// open a kinect by id, starting with 0 (sorted by serial # lexicographically))
-	//kinect.open("A00362A08602047A");	// open a kinect using it's unique serial #
-	
-	// print the intrinsic IR sensor values
-	if(kinect1.isConnected()) {
-		ofLogNotice() << "sensor-emitter dist: " << kinect1.getSensorEmitterDistance() << "cm";
-		ofLogNotice() << "sensor-camera dist:  " << kinect1.getSensorCameraDistance() << "cm";
-		ofLogNotice() << "zero plane pixel size: " << kinect1.getZeroPlanePixelSize() << "mm";
-		ofLogNotice() << "zero plane dist: " << kinect1.getZeroPlaneDistance() << "mm";
-	}
-	
-	
-	//	colorImg.allocate(kinect1.width, kinect1.height);
-	k1GrayImage.allocate(kinect1.width, kinect1.height);
-	k1GrayImageThreshNear.allocate(kinect1.width, kinect1.height);
-	k1GrayImageThreshFar.allocate(kinect1.width, kinect1.height);
-	
+	drawHeight = 450;
 	
 	
 	
@@ -51,25 +25,13 @@ void ofApp::setup(){
 	
 	
 	// init shufa
-	shufaImg1.load("shufa1.png");
-	shufaImg1.resize(640, 480);
+	shufaImg.load("shufa.jpg");
+	shufaImg.resize(800, 450);
 	
 	
-	// init camera
-	simpleCam.setup(640, 480, true);
 	
-	cameraFbo.allocate(640, 480);
-	cameraFbo.black();
 	
-	// init for opencv
-	imitate(shufaDiff,simpleCam);
-	imitate(overlap,simpleCam);
 	
-	// init for diff
-	imitate(previous, simpleCam);
-	imitate(diff, simpleCam);
-	
-
 	// init sound analyzer ================================
 	// check all device
 	soundStream.printDeviceList();
@@ -93,11 +55,11 @@ void ofApp::setup(){
 	if(!devices.empty()){
 		settings.setInDevice(devices[0]);
 	}
-
 	
-//	for (int i = 0; i < devices.size(); i++) {
+	
+	//	for (int i = 0; i < devices.size(); i++) {
 	//		cout << "devices  : " << devices[i].name << endl;
-//	}
+	//	}
 	
 	
 	int sampleRate = 44100;
@@ -116,6 +78,10 @@ void ofApp::setup(){
 	
 	
 	
+	// init opencv
+	contourFinder.setMinAreaRadius(5);
+	contourFinder.setMaxAreaRadius(150);
+	contourFinder.setInvert(true); // find black instead of white
 	
 	
 	
@@ -125,15 +91,12 @@ void ofApp::setup(){
 	
 	
 	float ratio = 2.0;
-	int flowToolsNum = 1;
-	for(int i = 0;i < flowToolsNum;i++){
-		MyFlowTools * f = new MyFlowTools();
-		f->setup(drawWidth, drawHeight, ratio, "myflow_" + ofToString(i));
-		f->setFlowColor(ofColor(ofRandom(255),ofRandom(255),ofRandom(255)));// for debug only
-		
-		f->particleFlow.activate(false);
-		vecMyFlowTools.push_back(f);
-	}
+	
+	myFlowTools.setup(drawWidth, drawHeight, ratio, "myflow");
+	//	myFlowTools.setFlowColor(ofColor(ofRandom(255),ofRandom(255),ofRandom(255)));// for debug only
+	
+	myFlowTools.particleFlow.activate(false);
+	
 	
 	
 	
@@ -144,7 +107,7 @@ void ofApp::setup(){
 	
 	// syphon
 	syphonFbo.allocate(drawWidth,drawHeight,GL_RGBA);
-	syphonServer.setName("pGSLS");
+	syphonServer.setName("pGSLS_Guiqin");
 	
 	
 	
@@ -152,22 +115,17 @@ void ofApp::setup(){
 	
 	// kinect
 	// ...............  kinect
-	gui.add(bThreshWithOpenCV.set("thresh with opencv",false));
-	gui.add(k1GrayThreshNear.set("kinect1 near",0,1,255));
-	gui.add(k1GrayThreshFar.set("kinect1 far",0,1,255));
-	gui.add(k1Angle.set("kinect1 angle",0,2,90));
 	
 	
 	// opencv gui
 	gui.add(threshold.set("Threshold", 128, 0, 255));
-	gui.add(diffThreshold.set("diff Threshold", 0, 1, 60));
-	gui.add(diffValueFactorForDissipation.set("diff dissipation", 1, 10, 1000));
-	gui.add(dissipationTopValue.set("dissipation top value", 0.001, 0.0001, 0.1));
-
 	gui.add(trackHs.set("Track Hue/Saturation", false));
-	gui.add(bFlipCamera.set("flip camera", true));
 	gui.add(blackWhiteThreshold.set("black white threshold",0,1,255));
+	gui.add(bShowContour.set("show contour", false));
+	gui.add(bContourFinderUpdate.set("contourfinder update", false));
+	gui.add(bStartFlow.set("start flow", false));
 	gui.add(rmsThreshold.set("rms threshold",0,0.02,1));
+	
 	
 	// seva setting with give name
 	if (!ofFile("settings.xml"))
@@ -184,108 +142,77 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::update(){
 	
-	// kinect1
-	kinect1.setCameraTiltAngle(k1Angle.get());
-	kinect1.update();
 	
-	// there is a new frame and we are connected
-	if(kinect1.isFrameNew()) {
+	
+	
+	// opencv
+	
+	if(bContourFinderUpdate.get()){
+		contourFinder.setTargetColor(targetColor, trackHs ? TRACK_COLOR_HS : TRACK_COLOR_RGB);
+		contourFinder.setThreshold(threshold.get());
+		contourFinder.findContours(shufaImg);
 		
-		// load grayscale depth image from the kinect1 source
-		k1GrayImage.setFromPixels(kinect1.getDepthPixels());
+	}
+	
+	
+	if(rms >= rmsThreshold.get() && vecContourBlobImagesForFlow.size() > 0){
+		goNextFlow();
+	}
+	
+	
+	// prepare back image below flow image ====================
+	//  draw current contourindex contour blobs white
+	
+	ofPixels tmpPixels = shufaImg.getPixels();
+	
+	
+	// according contour finder
+	//	if(contourIndex >= 0 & contourIndex < contourFinder.getContours().size()){
+	
+	// according vecContourBlobImagesForFlow
+	
+	
+	if(contourIndex >= 0 & contourIndex < vecContourBlobImagesForFlow.size()){
 		
-		// we do two thresholds - one for the far plane and one for the near plane
-		// we then do a cvAnd to get the pixels which are a union of the two thresholds
-		if(bThreshWithOpenCV) {
-			k1GrayImageThreshNear = k1GrayImage;
-			k1GrayImageThreshFar = k1GrayImage;
-			k1GrayImageThreshNear.threshold(k1GrayThreshNear.get(), true);
-			k1GrayImageThreshFar.threshold(k1GrayThreshFar.get());
-			cvAnd(k1GrayImageThreshNear.getCvImage(), k1GrayImageThreshFar.getCvImage(), k1GrayImage.getCvImage(), NULL);
-			
-		} else {
-			
-			// or we do it ourselves - show people how they can work with the pixels
-			ofPixels & pix = k1GrayImage.getPixels();
-			int numPixels = pix.size();
-			for(int i = 0; i < numPixels; i++) {
-				if(pix[i] < k1GrayThreshNear.get() && pix[i] > k1GrayThreshFar.get()) {
-					pix[i] = 255;
-				} else {
-					pix[i] = 0;
+		
+		// thread out error ======================  TODO
+		for (int k = 0; k <= contourIndex; k++) {
+			if(contourBlobs[k].size() > 0){
+				for (int j = 0; j < contourBlobs[k].size(); j++) {
+					
+					tmpPixels.setColor(contourBlobs[k][j].x, contourBlobs[k][j].y, ofColor(255,255,255));
+					
 				}
 			}
+			
+			
 		}
 		
-		// update the cv images
-		k1GrayImage.flagImageChanged();
 		
 	}
 	
-	
-	
-	
-	// if update for flow
-	//	if (diffValue >= diffThreshold.get()) {
-	//	absdiff(shufaImg1,simpleCam,shufaDiff);
-//	ofImage kinectDepthFrame = kinect.getDepthPixels();
-//	absdiff(shufaImg1,kinectDepthFrame,shufaDiff);
-//	shufaDiff.update();
-//
-//	subtract(shufaImg1,shufaDiff, overlap);
-//	overlap.update();
-//
-//	float diffDelta = diffValue - diffThreshold.get();
-//	//	if(diffDelta < 0){
-//	//		diffDelta == 0;
-//	//	}
-//	//
-//
-//	//	}
-//
-//
-//
+	backImg.setFromPixels(tmpPixels);
 	
 	
 	
 	
-	
-	
-	
-	// simplecam ==========================================
-	
-	
-	simpleCam.update();
-//	if (bFlipCamera.get()){
-//		flip(simpleCam, simpleCam, 1);
-//	}  // Flip Horizontal
-//
-		// take the absolute difference of prev and cam and save it inside diff
-		absdiff(simpleCam, previous, diff);
-		diff.update();
-	
-		// like ofSetPixels, but more concise and cross-toolkit
-		copy(simpleCam, previous);
-	
-		diffMean = mean(toCv(diff));
-	
-		diffValue = diffMean[0] + diffMean[1] + diffMean[2];
-	
-		diffValue = diffValue / 3;
-	////	cout << diffValue << endl;
-	
-	
-	// whne diff great then a threshold to update fbo for flow
-	if (diffValue > diffThreshold.get()) {
-		absdiff(shufaImg1,simpleCam,shufaDiff);
-		shufaDiff.update();
-		
-		subtract(shufaImg1,shufaDiff, overlap);
-		overlap.update();
+	// prepare obsticle image from back image invert
+	// invert each pixel for obsticle;
+	for (int i = 0; i < tmpPixels.getWidth(); i++) {
+		for(int j = 0;j < tmpPixels.getHeight();j++){
+			tmpPixels.setColor(i, j,tmpPixels.getColor(i, j).invert());
+		}
 	}
 	
-
-
+	obsticleImg.setFromPixels(tmpPixels);
+	
+	ofPushStyle();
+	ofEnableBlendMode(OF_BLENDMODE_DISABLED);
+	obsticleFbo.begin();
+	obsticleImg.draw(0, 0);
+	obsticleFbo.end();
+	ofPopStyle();
+	
 	
 	
 	
@@ -295,16 +222,40 @@ void ofApp::update(){
 	ofPushStyle();
 	ofEnableBlendMode(OF_BLENDMODE_DISABLED);
 	flowFbo.begin();
-	//	if (doFlipCamera){
-	//		simpleCam.draw(cameraFbo.getWidth(), 0, -cameraFbo.getWidth(), cameraFbo.getHeight());
+	//		if(drawTestImage){
+	//			imgTest1.draw(0, sin(ofGetElapsedTimeMillis()));
+	//		}
 	//
-	//	}  // Flip Horizontal
-	//	else{
-	//		simpleCam.draw(0, 0, cameraFbo.getWidth(), cameraFbo.getHeight());
-	//
-	//	}
 	
-	overlap.draw(0, 0, cameraFbo.getWidth(), cameraFbo.getHeight());
+	
+	// debug draw each contour blob for a certain time
+	if(contourIndex >= 0 & contourIndex < vecContourBlobImagesForFlow.size()){
+		
+		int timeStamp = myTimer.counterMil;
+		if(vecDrawImageForFlowOnce[contourIndex] == 0){
+			vecDrawImageForFlowOnce[contourIndex] = timeStamp;
+			
+		}
+		int delta = timeStamp - vecDrawImageForFlowOnce[contourIndex] + 1;
+		if(delta < drawImageForFlowMilSecs){
+			//			vecContourBlobImagesForFlow[contourIndex].draw(0,-1 * delta / deltaSpeedFactor);
+			
+			// - y direction for debug ==============================  TODO
+			vecContourBlobImagesForFlow[contourIndex].draw(
+														   vecContourBlobImagesBoudingBox[contourIndex].x,
+														   vecContourBlobImagesBoudingBox[contourIndex].y -1 * delta / deltaSpeedFactor,
+														   vecContourBlobImagesBoudingBox[contourIndex].z,
+														   vecContourBlobImagesBoudingBox[contourIndex].w);
+			
+			
+			// -x direction for vertical handwriting ==============
+			//			vecContourBlobImagesForFlow[contourIndex].draw(vecContourBlobImagesBoudingBox[contourIndex].x - 1 * delta / deltaSpeedFactor,
+			//														   vecContourBlobImagesBoudingBox[contourIndex].y,
+			//														   vecContourBlobImagesBoudingBox[contourIndex].z,
+			//														   vecContourBlobImagesBoudingBox[contourIndex].w);
+			
+		}
+	}
 	
 	
 	flowFbo.end();
@@ -314,25 +265,7 @@ void ofApp::update(){
 	
 	
 	
-	ofPushStyle();
-	ofEnableBlendMode(OF_BLENDMODE_DISABLED);
-	obsticleFbo.begin();
-	//obsticleImg.draw(0, 0);
-	obsticleFbo.end();
-	ofPopStyle();
-
-	for (int i = 0; i < vecMyFlowTools.size(); i++) {
-		
-		vecMyFlowTools[i]->getFluidSimulation().setSpeed(20.0 + diffValue);
-		float dissipation = dissipationTopValue.get() - diffValue / diffValueFactorForDissipation.get();
-		
-		if(dissipation < 0){
-			dissipation = 0;
-		}
-		vecMyFlowTools[i]->getFluidSimulation().setDissipation(dissipation);
-		vecMyFlowTools[i]->update(&flowFbo, &obsticleFbo);
-		
-	}
+	myFlowTools.update(&flowFbo,&obsticleFbo);
 	
 	
 	
@@ -343,36 +276,55 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 	
-	
 	syphonFbo.begin();
-	ofClear(255, 255, 255);
+	ofClear(0, 0, 0);
 	
 	
-	for (int i = 0; i < vecMyFlowTools.size(); i++) {
-		vecMyFlowTools[i]->drawColorFlow();
+	//	if(drawBackImg){
+	//		imgTest1.draw(0,0);
+	//	}
+	
+	
+	
+	// draw image below flow
+	backImg.draw(0, 0);
+	
+	
+	// draw flow ============================================
+	myFlowTools.draw();
+	
+	
+	
+	
+	
+	
+	
+	
+	// opencv
+	
+	if(bShowContour.get()){
+		ofSetColor(255, 0, 0);
+		contourFinder.draw();
 	}
 	
-	syphonFbo.end();
 	
+	
+	syphonFbo.end();
 	
 	syphonServer.publishTexture(&syphonFbo.getTexture());
 	
 	
 	
-	k1GrayImage.draw(0,0);
 	
-	//	overlap.draw(0,0);
 	if(bDrawGui){
 		
 		gui.draw();
-		for (int i = 0; i < vecMyFlowTools.size(); i++) {
-			vecMyFlowTools[i]->drawGui();
-		}
 		
+		myFlowTools.drawGui();
+		
+		showAudioDebug();
 		
 	}
-	
-	showAudioDebug();
 }
 
 //--------------------------------------------------------------
@@ -382,8 +334,6 @@ void ofApp::exit(){
 	myTimer.stopThread();
 	ofSoundStreamStop();
 	
-	kinect1.setCameraTiltAngle(0); // zero the tilt on exit
-	kinect1.close();
 	
 	
 }
@@ -416,12 +366,12 @@ void ofApp::audioIn(ofSoundBuffer & input){
 	
 	rms = curVol;
 	
-//	input.getChannel(chennalBuffer, 0);
-//	fft->setSignal(chennalBuffer.getBuffer().data());
-//	float* curFft = fft->getAmplitude();
-//
-//	fftData = curFft;
-//
+	//	input.getChannel(chennalBuffer, 0);
+	//	fft->setSignal(chennalBuffer.getBuffer().data());
+	//	float* curFft = fft->getAmplitude();
+	//
+	//	fftData = curFft;
+	//
 }
 
 
@@ -431,15 +381,15 @@ void ofApp::showAudioDebug(){
 	//audio analyse debug ===========================
 	int yPos = 500;
 	
-//	if(fftData){
-//		int fftBinScale = 500;
-//		int fftBinWidth = 2;
-//		for (int i = 0; i < fft->getBinSize(); i++) {
-//			ofSetColor(0,255,0,255);
-//			ofDrawRectangle(fftBinWidth * i, yPos, fftBinWidth, - 1 * fftData[i] * fftBinScale);
-//		}
-//
-//	}
+	//	if(fftData){
+	//		int fftBinScale = 500;
+	//		int fftBinWidth = 2;
+	//		for (int i = 0; i < fft->getBinSize(); i++) {
+	//			ofSetColor(0,255,0,255);
+	//			ofDrawRectangle(fftBinWidth * i, yPos, fftBinWidth, - 1 * fftData[i] * fftBinScale);
+	//		}
+	//
+	//	}
 	int rmsScale = 500;
 	ofSetColor(0,255,0,255);
 	ofDrawRectangle(10, yPos + 10, rmsScale * rms, 20);
@@ -450,6 +400,29 @@ void ofApp::showAudioDebug(){
 }
 
 //--------------------------------------------------------------
+
+void ofApp::goNextFlow(){
+	
+	if(bStartFlow.get()){
+		if(contourIndex >= vecContourBlobImagesForFlow.size()){
+			contourIndex = -1;
+			
+			// reset draw timestamp
+			for (int i = 0; i < vecDrawImageForFlowOnce.size(); i++) {
+				vecDrawImageForFlowOnce[i] = 0;
+			}
+			
+			
+		}
+		contourIndex += 1;
+		
+	}
+	
+	
+}
+
+
+//--------------------------------------------------------------
 void ofApp::keyPressed(int key){
 	switch(key){
 			
@@ -457,10 +430,110 @@ void ofApp::keyPressed(int key){
 			bDrawGui = !bDrawGui;
 			break;
 		case 'd':
+			break;
 			
-			break;
+			// for debug test only ==================
 		case 'c':
+			goNextFlow();
 			break;
+			
+			
+		case 'b':
+			
+			// stop update contourfinder for effeciency
+			bContourFinderUpdate.set(false);
+			
+			contourIndex = -1;
+			contourBlobs.clear();
+			
+			for (int i = 0; i < contourFinder.getContours().size(); i++) {
+				vector<cv::Point> curBlob;
+				
+				// collect contour finder points  ================
+				vector<cv::Point> points = contourFinder.getContour(i);
+				
+				for (int j = 0; j < points.size(); j++) {
+					cv::Point point = points[j];
+					
+					curBlob.push_back(point);
+					
+				}
+				
+				
+				
+				
+				
+				
+				
+				// collect all point inside current contour polyline
+				ofPolyline polyLine = contourFinder.getPolyline(i);
+				
+				for (int j = 0; j < shufaImg.getWidth(); j++) {
+					for (int k = 0; k < shufaImg.getHeight(); k++) {
+						cv::Point p = cv::Point(j,k);
+						if(polyLine.inside(j, k)){
+							curBlob.push_back(p);
+						}
+						
+					}
+				}
+				
+				
+				
+				// collect curBlob
+				
+				contourBlobs.push_back(curBlob);
+				
+				
+				// get bouding box data left point position x y and width and height;
+				ofVec4f boudingBox;
+				boudingBox.set(contourFinder.getBoundingRect(i).x, contourFinder.getBoundingRect(i).y, contourFinder.getBoundingRect(i).width, contourFinder.getBoundingRect(i).height);
+				
+				
+				// make a image with blob points and collect
+				ofImage img;
+				// make a img for contour as sub image
+				
+				
+				img.allocate(boudingBox.z,boudingBox.w,OF_IMAGE_GRAYSCALE);
+				
+				//				img.allocate(imgTest3.getWidth(), imgTest3.getHeight(), OF_IMAGE_GRAYSCALE);
+				ofPixels pixels;
+				//				pixels.allocate(imgTest3.getWidth(), imgTest3.getHeight(), 1);
+				pixels.allocate(boudingBox.z,boudingBox.w,1);
+				pixels.setImageType(OF_IMAGE_GRAYSCALE);
+				
+				// draw all white background
+				for (int i = 0; i < pixels.size(); i++) {
+					pixels.setColor(i,ofColor(255));
+				}
+				
+				// draw black point for contour blob
+				for (int i = 0; i < curBlob.size(); i++) {
+					
+					//					pixels.setColor(curBlob[i].x, curBlob[i].y, ofColor(0));
+					
+					// move point according contour finder target image to saperate image (0,0)
+					pixels.setColor(curBlob[i].x - boudingBox.x, curBlob[i].y - boudingBox.y, ofColor(0));
+				}
+				
+				img.setFromPixels(pixels);
+				
+				vecContourBlobImagesForFlow.push_back(img);
+				
+				
+				// draw once mark for this contour blob
+				// if == 0 , not draw yet
+				// else keep the timestamp of drawing
+				// and stop draw after 1000 mil later
+				vecDrawImageForFlowOnce.push_back(0);
+				
+				
+				// save bouding box data to draw sub section but whole image
+				vecContourBlobImagesBoudingBox.push_back(boudingBox);
+			}// end iterate contourfinder
+			
+			
 		default:
 			break;
 	}
@@ -522,95 +595,4 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 	
 }
 
-
-
-
-
-
-//backup
-
-
-// kinect
-// enable depth->video image calibration
-//kinect.setRegistration(true);
-//
-//kinect.init();
-////kinect.init(true); // shows infrared instead of RGB video image
-////kinect.init(false, false); // disable video image (faster fps)
-//
-//kinect.open();		// opens first available kinect
-////kinect.open(1);	// open a kinect by id, starting with 0 (sorted by serial # lexicographically))
-////kinect.open("A00362A08602047A");	// open a kinect using it's unique serial #
-//
-//// print the intrinsic IR sensor values
-//if(kinect.isConnected()) {
-//	ofLogNotice() << "sensor-emitter dist: " << kinect.getSensorEmitterDistance() << "cm";
-//	ofLogNotice() << "sensor-camera dist:  " << kinect.getSensorCameraDistance() << "cm";
-//	ofLogNotice() << "zero plane pixel size: " << kinect.getZeroPlanePixelSize() << "mm";
-//	ofLogNotice() << "zero plane dist: " << kinect.getZeroPlaneDistance() << "mm";
-//}
-//
-//
-//colorImg.allocate(kinect.width, kinect.height);
-//grayImage.allocate(kinect.width, kinect.height);
-//grayThreshNear.allocate(kinect.width, kinect.height);
-//grayThreshFar.allocate(kinect.width, kinect.height);
-//
-//nearThreshold = 245;
-//farThreshold = 213;
-//bThreshWithOpenCV = true;
-//
-//angle = 0;
-//kinect.setCameraTiltAngle(angle);
-
-//kinect.update();
-//
-//// there is a new frame and we are connected
-//if(kinect.isFrameNew()) {
-//
-//	// load grayscale depth image from the kinect source
-//	grayImage.setFromPixels(kinect.getDepthPixels());
-//
-//	// we do two thresholds - one for the far plane and one for the near plane
-//	// we then do a cvAnd to get the pixels which are a union of the two thresholds
-//	if(bThreshWithOpenCV) {
-//		grayThreshNear = grayImage;
-//		grayThreshFar = grayImage;
-//		grayThreshNear.threshold(nearThreshold, true);
-//		grayThreshFar.threshold(farThreshold);
-//		cvAnd(grayThreshNear.getCvImage(), grayThreshFar.getCvImage(), grayImage.getCvImage(), NULL);
-//	} else {
-//
-//		// or we do it ourselves - show people how they can work with the pixels
-//		ofPixels & pix = grayImage.getPixels();
-//		int numPixels = pix.size();
-//		for(int i = 0; i < numPixels; i++) {
-//			if(pix[i] < nearThreshold && pix[i] > farThreshold) {
-//				pix[i] = 255;
-//			} else {
-//				pix[i] = 0;
-//			}
-//		}
-//	}
-//
-//	// update the cv images
-//	grayImage.flagImageChanged();
-//	//		Canny(grayImage, grayImage, 100, 200, 3);
-//
-//
-//	// find contours which are between the size of 20 pixels and 1/3 the w*h pixels.
-//	// also, find holes is set to true so we will get interior contours as well....
-//	contourFinder.findContours(grayImage, 10, (kinect.width*kinect.height)/2, 20,
-//							   // if use approximate points
-//							   //								   true
-//							   false
-//							   );
-//	//		for(int i = 0; i < contourFinder.blobs.at(0).nPts; i++) {
-//
-//	//		cout << contourFinder.blobs.at(0).pts.at(0)[0] << endl;
-//	//		cout << contourFinder.blobs.at(0).pts.at(0)[1] << endl;
-//
-//	//		}
-//
-//}
 
