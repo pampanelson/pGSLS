@@ -87,6 +87,7 @@ public:
 	int					flowHeight;
 	int					drawWidth;
 	int					drawHeight;
+	int					halfDrawWidth;
 	
 	
 	//sound
@@ -146,6 +147,7 @@ public:
 	ofParameter<float> 	diffThreshold;
 	ofParameter<float> 	diffValueFactorForDissipation;
 	ofParameter<float> 	dissipationTopValue;
+	ofParameter<float> 	fluidGravityY;
 
 	ofParameter<int>	k1GrayThreshNear;
 	ofParameter<int>	k1GrayThreshFar;

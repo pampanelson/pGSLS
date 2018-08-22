@@ -11,7 +11,9 @@ void ofApp::setup(){
 	
 	
 	
-	drawWidth = 640;
+	drawWidth = 1550;
+	halfDrawWidth = 640;
+	
 	drawHeight = 512;
 	
 
@@ -56,11 +58,11 @@ void ofApp::setup(){
 	
 	
 	// init camera
-	simpleCam.setup(640, 480, true);
-	
-	cameraFbo.allocate(640, 480);
-	cameraFbo.black();
-	
+//	simpleCam.setup(640, 480, true);
+//
+//	cameraFbo.allocate(640, 480);
+//	cameraFbo.black();
+//
 	// init for opencv
 //	imitate(shufaDiff,shufaImg1);
 //	imitate(overlap,shufaImg1);
@@ -70,8 +72,8 @@ void ofApp::setup(){
 //	imitate(diff, shufaImg1);
 //
 	
-	shufaDiff.allocate(drawWidth, drawHeight, OF_IMAGE_COLOR);
-	overlap.allocate(drawWidth, drawHeight, OF_IMAGE_COLOR);
+//	shufaDiff.allocate(drawWidth, drawHeight, OF_IMAGE_COLOR);
+//	overlap.allocate(drawWidth, drawHeight, OF_IMAGE_COLOR);
 
 
 	// init sound analyzer ================================
@@ -136,6 +138,7 @@ void ofApp::setup(){
 //		f->setFlowColor(ofColor(ofRandom(255),ofRandom(255),ofRandom(255)));// for debug only
 		
 		f->particleFlow.activate(false);
+//		f->getFluidSimulation().setGravity(ofVec2f(0.0,9.8));
 		vecMyFlowTools.push_back(f);
 	}
 	
@@ -164,6 +167,7 @@ void ofApp::setup(){
 	
 	// opencv gui
 	gui.add(threshold.set("Threshold", 128, 0, 255));
+	gui.add(fluidGravityY.set("fluid gravity y", 0, 1, 500));
 	gui.add(diffThreshold.set("diff Threshold", 0, 1, 60));
 	gui.add(diffValueFactorForDissipation.set("diff dissipation", 1, 10, 1000));
 	gui.add(dissipationTopValue.set("dissipation top value", 0.001, 0.0001, 0.1));
@@ -337,7 +341,7 @@ void ofApp::update(){
 //	overlap.draw(0, 0,drawWidth,drawHeight);
 	
 	// use kinect but minus from fonts --------------------------
-	k1GrayImage.draw(0, 0);
+	k1GrayImage.draw(0, 0,halfDrawWidth,drawHeight);
 	
 	flowFbo.end();
 	
@@ -362,6 +366,12 @@ void ofApp::update(){
 //			dissipation = 0;
 //		}
 //		vecMyFlowTools[i]->getFluidSimulation().setDissipation(dissipation);
+		
+		
+		vecMyFlowTools[i]->getFluidSimulation().setGravity(ofVec2f(0.0,fluidGravityY.get()));
+
+		
+		
 		vecMyFlowTools[i]->update(&flowFbo, &obsticleFbo);
 
 	}
