@@ -11,8 +11,8 @@ void ofApp::setup(){
 	
 	
 	
-	drawWidth = 800;
-	drawHeight = 600;
+	drawWidth = 640;
+	drawHeight = 512;
 	
 
 	// setup k1
@@ -35,9 +35,9 @@ void ofApp::setup(){
 	
 	
 	//	colorImg.allocate(kinect1.width, kinect1.height);
-	k1GrayImage.allocate(kinect1.width, kinect1.height);
-	k1GrayImageThreshNear.allocate(kinect1.width, kinect1.height);
-	k1GrayImageThreshFar.allocate(kinect1.width, kinect1.height);
+	k1GrayImage.allocate(kinect1.width, kinect1.height,OF_IMAGE_GRAYSCALE);
+	k1GrayImageThreshNear.allocate(kinect1.width, kinect1.height,OF_IMAGE_GRAYSCALE);
+	k1GrayImageThreshFar.allocate(kinect1.width, kinect1.height,OF_IMAGE_GRAYSCALE);
 	
 	
 	
@@ -52,7 +52,7 @@ void ofApp::setup(){
 	
 	// init shufa
 	shufaImg1.load("shufa1.png");
-	shufaImg1.resize(640, 480);
+	shufaImg1.resize(640, 512);
 	
 	
 	// init camera
@@ -62,13 +62,17 @@ void ofApp::setup(){
 	cameraFbo.black();
 	
 	// init for opencv
-	imitate(shufaDiff,simpleCam);
-	imitate(overlap,simpleCam);
+//	imitate(shufaDiff,shufaImg1);
+//	imitate(overlap,shufaImg1);
+//
+//	// init for diff
+//	imitate(previous, shufaImg1);
+//	imitate(diff, shufaImg1);
+//
 	
-	// init for diff
-	imitate(previous, simpleCam);
-	imitate(diff, simpleCam);
-	
+	shufaDiff.allocate(drawWidth, drawHeight, OF_IMAGE_COLOR);
+	overlap.allocate(drawWidth, drawHeight, OF_IMAGE_COLOR);
+
 
 	// init sound analyzer ================================
 	// check all device
@@ -129,7 +133,7 @@ void ofApp::setup(){
 	for(int i = 0;i < flowToolsNum;i++){
 		MyFlowTools * f = new MyFlowTools();
 		f->setup(drawWidth, drawHeight, ratio, "myflow_" + ofToString(i));
-		f->setFlowColor(ofColor(ofRandom(255),ofRandom(255),ofRandom(255)));// for debug only
+//		f->setFlowColor(ofColor(ofRandom(255),ofRandom(255),ofRandom(255)));// for debug only
 		
 		f->particleFlow.activate(false);
 		vecMyFlowTools.push_back(f);
@@ -196,15 +200,15 @@ void ofApp::update(){
 		
 		// we do two thresholds - one for the far plane and one for the near plane
 		// we then do a cvAnd to get the pixels which are a union of the two thresholds
-		if(bThreshWithOpenCV) {
-			k1GrayImageThreshNear = k1GrayImage;
-			k1GrayImageThreshFar = k1GrayImage;
-			k1GrayImageThreshNear.threshold(k1GrayThreshNear.get(), true);
-			k1GrayImageThreshFar.threshold(k1GrayThreshFar.get());
-			cvAnd(k1GrayImageThreshNear.getCvImage(), k1GrayImageThreshFar.getCvImage(), k1GrayImage.getCvImage(), NULL);
-			
-		} else {
-			
+//		if(bThreshWithOpenCV) {
+//			k1GrayImageThreshNear = k1GrayImage;
+//			k1GrayImageThreshFar = k1GrayImage;
+//			k1GrayImageThreshNear.threshold(k1GrayThreshNear.get(), true);
+//			k1GrayImageThreshFar.threshold(k1GrayThreshFar.get());
+//			cvAnd(k1GrayImageThreshNear.getCvImage(), k1GrayImageThreshFar.getCvImage(), k1GrayImage.getCvImage(), NULL);
+//
+//		} else {
+		
 			// or we do it ourselves - show people how they can work with the pixels
 			ofPixels & pix = k1GrayImage.getPixels();
 			int numPixels = pix.size();
@@ -215,14 +219,16 @@ void ofApp::update(){
 					pix[i] = 0;
 				}
 			}
-		}
+//		}
 		
 		// update the cv images
-		k1GrayImage.flagImageChanged();
-		
+//		k1GrayImage.flagImageChanged();
 	}
 	
-	
+	k1GrayImage.resize(drawWidth, drawHeight);
+	k1GrayImage.update();
+
+
 	
 	
 	// if update for flow
@@ -255,38 +261,62 @@ void ofApp::update(){
 	// simplecam ==========================================
 	
 	
-	simpleCam.update();
-//	if (bFlipCamera.get()){
-//		flip(simpleCam, simpleCam, 1);
-//	}  // Flip Horizontal
+//	simpleCam.update();
+////	if (bFlipCamera.get()){
+////		flip(simpleCam, simpleCam, 1);
+////	}  // Flip Horizontal
+////
+//		// take the absolute difference of prev and cam and save it inside diff
+//		absdiff(simpleCam, previous, diff);
+//		diff.update();
 //
+//		// like ofSetPixels, but more concise and cross-toolkit
+//		copy(simpleCam, previous);
+//
+//		diffMean = mean(toCv(diff));
+//
+//		diffValue = diffMean[0] + diffMean[1] + diffMean[2];
+//
+//		diffValue = diffValue / 3;
+//	////	cout << diffValue << endl;
+//
+//
+//	// whne diff great then a threshold to update fbo for flow
+//	if (diffValue > diffThreshold.get()) {
+//		absdiff(shufaImg1,simpleCam,shufaDiff);
+//		shufaDiff.update();
+//
+//		subtract(shufaImg1,shufaDiff, overlap);
+//		overlap.update();
+//	}
+//
+
+
 		// take the absolute difference of prev and cam and save it inside diff
-		absdiff(simpleCam, previous, diff);
-		diff.update();
-	
+//		absdiff(k1GrayImage, previous, diff);
+//		diff.update();
+
 		// like ofSetPixels, but more concise and cross-toolkit
-		copy(simpleCam, previous);
-	
-		diffMean = mean(toCv(diff));
-	
-		diffValue = diffMean[0] + diffMean[1] + diffMean[2];
-	
-		diffValue = diffValue / 3;
-	////	cout << diffValue << endl;
-	
-	
+//		copy(k1GrayImage, previous);
+
+//		diffMean = mean(toCv(diff));
+//
+//		diffValue = diffMean[0] + diffMean[1] + diffMean[2];
+//
+//		diffValue = diffValue / 3;
+//	////	cout << diffValue << endl;
+
+
 	// whne diff great then a threshold to update fbo for flow
-	if (diffValue > diffThreshold.get()) {
-		absdiff(shufaImg1,simpleCam,shufaDiff);
-		shufaDiff.update();
-		
-		subtract(shufaImg1,shufaDiff, overlap);
-		overlap.update();
-	}
-	
+//	if (diffValue > diffThreshold.get()) {
+//		absdiff(shufaImg1,k1GrayImage,shufaDiff);
+//		shufaDiff.update();
+//
+//		subtract(shufaImg1,shufaDiff, overlap);
+//		overlap.update();
+//	}
 
 
-	
 	
 	
 	
@@ -304,8 +334,10 @@ void ofApp::update(){
 	//
 	//	}
 	
-	overlap.draw(0, 0, cameraFbo.getWidth(), cameraFbo.getHeight());
+//	overlap.draw(0, 0,drawWidth,drawHeight);
 	
+	// use kinect but minus from fonts --------------------------
+	k1GrayImage.draw(0, 0);
 	
 	flowFbo.end();
 	
@@ -322,18 +354,18 @@ void ofApp::update(){
 	ofPopStyle();
 
 	for (int i = 0; i < vecMyFlowTools.size(); i++) {
-		
-		vecMyFlowTools[i]->getFluidSimulation().setSpeed(20.0 + diffValue);
-		float dissipation = dissipationTopValue.get() - diffValue / diffValueFactorForDissipation.get();
-		
-		if(dissipation < 0){
-			dissipation = 0;
-		}
-		vecMyFlowTools[i]->getFluidSimulation().setDissipation(dissipation);
+
+//		vecMyFlowTools[i]->getFluidSimulation().setSpeed(20.0 + diffValue);
+//		float dissipation = dissipationTopValue.get() - diffValue / diffValueFactorForDissipation.get();
+//
+//		if(dissipation < 0){
+//			dissipation = 0;
+//		}
+//		vecMyFlowTools[i]->getFluidSimulation().setDissipation(dissipation);
 		vecMyFlowTools[i]->update(&flowFbo, &obsticleFbo);
-		
+
 	}
-	
+
 	
 	
 	
@@ -360,8 +392,10 @@ void ofApp::draw(){
 	
 	
 	k1GrayImage.draw(0,0);
+//	shufaDiff.draw(640, 0);
+//	overlap.draw(0, 0);
 	
-	//	overlap.draw(0,0);
+//		overlap.draw(0,0);
 	if(bDrawGui){
 		
 		gui.draw();

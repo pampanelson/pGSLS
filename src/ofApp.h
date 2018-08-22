@@ -66,11 +66,14 @@ public:
 	// kinect --------
 	ofxKinect 			kinect1;
 
-	ofxCvColorImage 		colorImg;
-	ofxCvGrayscaleImage 	k1GrayImage; // grayscale depth image
-	ofxCvGrayscaleImage 	k1GrayImageThreshNear; // the near thresholded image
-	ofxCvGrayscaleImage 	k1GrayImageThreshFar; // the far thresholded image
+//	ofxCvColorImage 		colorImg;
+//	ofxCvGrayscaleImage 	k1GrayImage; // grayscale depth image
+//	ofxCvGrayscaleImage 	k1GrayImageThreshNear; // the near thresholded image
+//	ofxCvGrayscaleImage 	k1GrayImageThreshFar; // the far thresholded image
 
+	ofImage 	k1GrayImage; // grayscale depth image
+	ofImage 	k1GrayImageThreshNear; // the near thresholded image
+	ofImage 	k1GrayImageThreshFar; // the far thresholded image
 
 	
 	

@@ -4,14 +4,14 @@
 	<Track_Hue_Saturation>0</Track_Hue_Saturation>
 	<black_white_threshold>0</black_white_threshold>
 	<rms_threshold>0.0422988</rms_threshold>
-	<diff_Threshold>7.785</diff_Threshold>
-	<diff_dissipation>1000</diff_dissipation>
+	<diff_Threshold>1</diff_Threshold>
+	<diff_dissipation>10</diff_dissipation>
 	<flip_camera>1</flip_camera>
 	<dissipation_top_value>0.0249618</dissipation_top_value>
 	<thresh_with_opencv>1</thresh_with_opencv>
-	<kinect1_near>106</kinect1_near>
-	<kinect1_far>8</kinect1_far>
-	<kinect1_angle>22</kinect1_angle>
+	<kinect1_near>166</kinect1_near>
+	<kinect1_far>1</kinect1_far>
+	<kinect1_angle>24</kinect1_angle>
 </settings>
 <MyFlowToolsSettings>
 	<UnknownName />
