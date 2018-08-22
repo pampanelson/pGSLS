@@ -9,12 +9,16 @@ void ofApp::setup(){
 	ofSetFrameRate(30);
 	ofSetVerticalSync(true);
 	
+	drawWidth = 800;
+	drawHeight = 450;
+	
 	
 	//syphon server
 	individualTextureSyphonServer.setName("pGSLS_Syphon_Output");
-	syphonFbo.allocate(ofGetWindowWidth(),ofGetWindowHeight(), GL_RGBA);
+	syphonFbo.allocate(drawWidth,drawHeight, GL_RGBA);
 	
 
+	
 
 	
 	
@@ -25,7 +29,7 @@ void ofApp::setup(){
 	// white background color
 	ofSetBackgroundColor(255, 255, 255);
 	
-	fbo.allocate(ofGetWindowWidth(),ofGetWindowHeight(),GL_RGBA);
+	fbo.allocate(drawWidth,drawHeight,GL_RGBA);
 	
 	
 	//	imgTest1.load("test-2.jpg");
@@ -34,7 +38,7 @@ void ofApp::setup(){
 	//	imgTest3.load("test-4.jpg");
 	
 	
-	imgTest3.load("alpha1024x768.jpg");
+	imgTest3.load("shufa_800x450.jpg");
 	
 	// init opencv
 	contourFinder.setMinAreaRadius(5);
@@ -91,25 +95,9 @@ void ofApp::setup(){
 	//	cout << fft->getBinSize() << endl;
 	
 	
+
 	
-	
-	
-	
-	
-	
-	
-	// init camera
-	//	simpleCam.setup(640, 480, true);
-	//	didCamUpdate = false;
-	//	cameraFbo.allocate(640, 480);
-	//	cameraFbo.black();
-	
-	drawWidth = ofGetWindowWidth();
-	drawHeight = ofGetWindowHeight();
-	//    flowWidth = drawWidth;
-	//    flowHeight = drawHeight;
-	
-	ratio = 1;
+	ratio = 2;
 	
 	myFlowTools.setup(drawWidth, drawHeight, ratio,"myFlow");
 	flowFbo.allocate(drawWidth,drawHeight);
