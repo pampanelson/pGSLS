@@ -3,10 +3,10 @@
 	<Threshold>2.21631</Threshold>
 	<Track_Hue_Saturation>0</Track_Hue_Saturation>
 	<black_white_threshold>0</black_white_threshold>
-	<rms_threshold>0.3826</rms_threshold>
-	<show_contour>1</show_contour>
-	<contourfinder_update>1</contourfinder_update>
-	<start_flow>0</start_flow>
+	<rms_threshold>0.0396</rms_threshold>
+	<show_contour>0</show_contour>
+	<contourfinder_update>0</contourfinder_update>
+	<start_flow>1</start_flow>
 </settings>
 <MyFlowToolsSettings>
 	<UnknownName />
