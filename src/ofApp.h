@@ -60,22 +60,9 @@ public:
 	ofVideoGrabber		simpleCam;
 	bool				didCamUpdate;
 	ftFbo				cameraFbo;
-	ofParameter<bool>	doFlipCamera;
-	
-	
-	// kinect --------
-	ofxKinect 			kinect1;
 
-//	ofxCvColorImage 		colorImg;
-//	ofxCvGrayscaleImage 	k1GrayImage; // grayscale depth image
-//	ofxCvGrayscaleImage 	k1GrayImageThreshNear; // the near thresholded image
-//	ofxCvGrayscaleImage 	k1GrayImageThreshFar; // the far thresholded image
 
-	ofImage 	k1GrayImage; // grayscale depth image
-	ofImage 	k1GrayImageThreshNear; // the near thresholded image
-	ofImage 	k1GrayImageThreshFar; // the far thresholded image
 
-	
 	
 	// Time
 	float				lastTime;
@@ -90,31 +77,6 @@ public:
 	int					halfDrawWidth;
 	
 	
-	//sound
-	void 				audioIn(ofSoundBuffer &inBuffer);
-	void				showAudioDebug();
-	//	void				audioIn(float *input, int bufferSize, int nChannels);
-	ofSoundStream 		soundStream;
-	ofSoundBuffer 		audioInSoundBuffer;
-	ofSoundBuffer		chennalBuffer;
-	
-	
-//	ofxFft* 			fft;
-//	float * 			fftData;
-	
-	float 				rms;
-	float 				power;
-	
-	vector <float> 		left;
-	vector <float> 		right;
-	
-	
-	
-	
-	
-	
-	
-	
 	// syphon
 	ofFbo				syphonFbo;
 	ofPixels			fboPixels;
@@ -127,41 +89,9 @@ public:
 	ofFbo               flowFbo;
 	ofFbo               obsticleFbo;
 	
-
-	// shufa
-	ofImage				shufaDiff;
-	ofImage				overlap;
-	ofImage				shufaImg1;
-	
-	
-	ofPixels 			previous;
-	ofImage				diff;
-	cv::Scalar 			diffMean;
-	float				diffValue;
-	
-
 	
 	ofxPanel			gui;
 	ofParameter<bool> 	bFlipCamera;
-	ofParameter<float> 	threshold;
-	ofParameter<float> 	diffThreshold;
-	ofParameter<float> 	defaultDissipation;
-	ofParameter<float> 	rmsFactorForDissipation;
-	ofParameter<float> 	rmsDamperForDissipation;
-	ofParameter<float> 	dissipationTopValue;
-	ofParameter<float> 	fluidGravityY;
-
-	ofParameter<int>	k1GrayThreshNear;
-	ofParameter<int>	k1GrayThreshFar;
-	
-	ofParameter<bool> 		bThreshWithOpenCV;
-	ofParameter<int>  		k1Angle;
-
-
-	ofParameter<bool> 	trackHs;
-	ofParameter<int>	blackWhiteThreshold;
-	ofParameter<float>	rmsThreshold;
-	
 
 	bool				bDrawGui = true;
 	
