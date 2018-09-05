@@ -11,10 +11,10 @@ void ofApp::setup(){
 	
 	
 	
-	drawWidth = 640;
+	drawWidth = 1280;
 //	halfDrawWidth = 640;
 	
-	drawHeight = 512;
+	drawHeight = 800;
 
 	
 	// white background color
@@ -64,6 +64,24 @@ void ofApp::setup(){
 	
 	//using Syphon app Simple Server, found at http://syphon.v002.info/
 	syphonClient.set("Composition", "Arena");
+	
+	
+	
+	
+	syphonClient4ArenaBackground.setup();
+	
+	//using Syphon app Simple Server, found at http://syphon.v002.info/
+	syphonClient4ArenaBackground.set("Background Video", "Arena");
+	
+	
+	syphonClient4ArenaFront.setup();
+	
+	//using Syphon app Simple Server, found at http://syphon.v002.info/
+	syphonClient4ArenaFront.set("Front Video", "Arena");
+	
+	
+	
+	
 	
 	gui.setup("settings");
 	gui.add(bUseSyphonClient.set("use syphon client",false));
@@ -171,16 +189,21 @@ void ofApp::draw(){
 	ofClear(255, 255, 255);
 	
 	
+	syphonClient4ArenaBackground.draw(0, 0);
 	for (int i = 0; i < vecMyFlowTools.size(); i++) {
 		vecMyFlowTools[i]->drawColorFlow();
 	}
 	
+	syphonClient4ArenaFront.draw(0, 0);
 	syphonFbo.end();
 	
 	
 	syphonServer.publishTexture(&syphonFbo.getTexture());
 	
-	syphonClient.draw(0, 0);
+//	syphonClient.draw(0, 0);
+	
+
+
 	if(bDrawGui){
 		
 		gui.draw();

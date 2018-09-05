@@ -84,6 +84,8 @@ public:
 	
 	ofxSyphonServer		syphonServer;
 	ofxSyphonClient 	syphonClient;
+	ofxSyphonClient 	syphonClient4ArenaBackground;
+	ofxSyphonClient 	syphonClient4ArenaFront;
 
 	
 	// flow
