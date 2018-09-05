@@ -6,7 +6,7 @@
 	<rms_threshold>0.50216</rms_threshold>
 	<diff_Threshold>1</diff_Threshold>
 	<diff_dissipation>10</diff_dissipation>
-	<flip_camera>1</flip_camera>
+	<flip_camera>0</flip_camera>
 	<dissipation_top_value>0.0249618</dissipation_top_value>
 	<thresh_with_opencv>0</thresh_with_opencv>
 	<kinect1_near>102</kinect1_near>
@@ -16,6 +16,7 @@
 	<rms_factor__dissipation>106.854</rms_factor__dissipation>
 	<default__dissipation>0.00297471</default__dissipation>
 	<rms_damper__dissipation>0.0587742</rms_damper__dissipation>
+	<use_syphon_client>1</use_syphon_client>
 </settings>
 <MyFlowToolsSettings>
 	<UnknownName />
@@ -86,7 +87,7 @@
 	</velocity_mask>
 </MyFlowToolsSettings>
 <myflow_0>
-	<UnknownName></UnknownName>
+	<UnknownName />
 	<draw_mode>1</draw_mode>
 	<MODE>Composite</MODE>
 	<particle_flow>

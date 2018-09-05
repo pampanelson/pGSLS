@@ -83,7 +83,8 @@ public:
 	ofImage				fboImg;
 	
 	ofxSyphonServer		syphonServer;
-	
+	ofxSyphonClient 	syphonClient;
+
 	
 	// flow
 	ofFbo               flowFbo;
@@ -91,6 +92,7 @@ public:
 	
 	
 	ofxPanel			gui;
+	ofParameter<bool> 	bUseSyphonClient;
 	ofParameter<bool> 	bFlipCamera;
 
 	bool				bDrawGui = true;

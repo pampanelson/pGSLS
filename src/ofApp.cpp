@@ -23,10 +23,10 @@ void ofApp::setup(){
 
 	
 	// init camera
-	simpleCam.setup(640, 480, true);
-
-	cameraFbo.allocate(640, 480);
-	cameraFbo.black();
+//	simpleCam.setup(640, 480, true);
+//
+//	cameraFbo.allocate(640, 480);
+//	cameraFbo.black();
 
 
 	
@@ -60,10 +60,15 @@ void ofApp::setup(){
 	syphonServer.setName("pGSLS");
 	
 	
+	syphonClient.setup();
+	
+	//using Syphon app Simple Server, found at http://syphon.v002.info/
+	syphonClient.set("Composition", "Arena");
 	
 	gui.setup("settings");
+	gui.add(bUseSyphonClient.set("use syphon client",false));
 	gui.add(bFlipCamera.set("flip camera",false));
-	
+
 	// seva setting with give name
 	if (!ofFile("settings.xml"))
 		gui.saveToFile("settings.xml");
@@ -96,16 +101,23 @@ void ofApp::update(){
 	ofPushStyle();
 	ofEnableBlendMode(OF_BLENDMODE_DISABLED);
 	flowFbo.begin();
-	if (bFlipCamera.get()){
-		simpleCam.draw(cameraFbo.getWidth(), 0, -cameraFbo.getWidth(), cameraFbo.getHeight());
-
-	}  // Flip Horizontal
-	else{
-		simpleCam.draw(0, 0, cameraFbo.getWidth(), cameraFbo.getHeight());
-
+	
+	if(bUseSyphonClient.get()){
+		syphonClient.draw(0, 0, drawWidth, drawHeight);
+		
+	}else{
+//		if (bFlipCamera.get()){
+//			simpleCam.draw(cameraFbo.getWidth(), 0, -cameraFbo.getWidth(), cameraFbo.getHeight());
+//			
+//		}  // Flip Horizontal
+//		else{
+//			simpleCam.draw(0, 0, cameraFbo.getWidth(), cameraFbo.getHeight());
+//			
+//		}
+		
+		
 	}
 
-	
 	flowFbo.end();
 	
 	ofPopStyle();
@@ -168,7 +180,7 @@ void ofApp::draw(){
 	
 	syphonServer.publishTexture(&syphonFbo.getTexture());
 	
-	
+	syphonClient.draw(0, 0);
 	if(bDrawGui){
 		
 		gui.draw();
