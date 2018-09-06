@@ -60,27 +60,19 @@ void ofApp::setup(){
 	syphonServer.setName("pGSLS");
 	
 	
-	syphonClient.setup();
-	
-	//using Syphon app Simple Server, found at http://syphon.v002.info/
-	syphonClient.set("Composition", "Arena");
-	
-	
-	
+	syphonClient4ArenaFlow.setup();
+	syphonClient4ArenaFlow.set("Flow", "Arena");
 	
 	syphonClient4ArenaBackground.setup();
-	
-	//using Syphon app Simple Server, found at http://syphon.v002.info/
-	syphonClient4ArenaBackground.set("Background Video", "Arena");
+	syphonClient4ArenaBackground.set("Background", "Arena");
 	
 	
 	syphonClient4ArenaFront.setup();
-	
-	//using Syphon app Simple Server, found at http://syphon.v002.info/
-	syphonClient4ArenaFront.set("Front Video", "Arena");
+	syphonClient4ArenaFront.set("Front", "Arena");
 	
 	
-	
+	syphonClient4ArenaObstacle.setup();
+	syphonClient4ArenaObstacle.set("Obstacle","Arena");
 	
 	
 	gui.setup("settings");
@@ -121,7 +113,7 @@ void ofApp::update(){
 	flowFbo.begin();
 	
 	if(bUseSyphonClient.get()){
-		syphonClient.draw(0, 0, drawWidth, drawHeight);
+		syphonClient4ArenaFlow.draw(0, 0, drawWidth, drawHeight);
 		
 	}else{
 //		if (bFlipCamera.get()){
@@ -147,6 +139,7 @@ void ofApp::update(){
 	ofEnableBlendMode(OF_BLENDMODE_DISABLED);
 	obsticleFbo.begin();
 	//obsticleImg.draw(0, 0);
+	syphonClient4ArenaObstacle.draw(0, 0, drawWidth, drawHeight);
 	obsticleFbo.end();
 	ofPopStyle();
 
@@ -190,11 +183,12 @@ void ofApp::draw(){
 	
 	
 	syphonClient4ArenaBackground.draw(0, 0);
+	
 	for (int i = 0; i < vecMyFlowTools.size(); i++) {
 		vecMyFlowTools[i]->drawColorFlow();
 	}
-	
 	syphonClient4ArenaFront.draw(0, 0);
+	
 	syphonFbo.end();
 	
 	

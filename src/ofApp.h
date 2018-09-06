@@ -83,9 +83,10 @@ public:
 	ofImage				fboImg;
 	
 	ofxSyphonServer		syphonServer;
-	ofxSyphonClient 	syphonClient;
+	ofxSyphonClient 	syphonClient4ArenaFlow;
 	ofxSyphonClient 	syphonClient4ArenaBackground;
 	ofxSyphonClient 	syphonClient4ArenaFront;
+	ofxSyphonClient 	syphonClient4ArenaObstacle;
 
 	
 	// flow
