@@ -187,7 +187,7 @@ void ofApp::draw(){
 	for (int i = 0; i < vecMyFlowTools.size(); i++) {
 		vecMyFlowTools[i]->drawColorFlow();
 	}
-	syphonClient4ArenaFront.draw(0, 0);
+//	syphonClient4ArenaFront.draw(0, 0);
 	
 	syphonFbo.end();
 	
