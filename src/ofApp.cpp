@@ -11,10 +11,10 @@ void ofApp::setup(){
 	
 	
 	
-	drawWidth = 1280;
-//	halfDrawWidth = 640;
-	
-	drawHeight = 800;
+    drawWidth = 1280;
+    //    halfDrawWidth = 640;
+    
+    drawHeight = 720;
 
 	
 	// white background color
@@ -112,21 +112,21 @@ void ofApp::update(){
 	ofEnableBlendMode(OF_BLENDMODE_DISABLED);
 	flowFbo.begin();
 	
-	if(bUseSyphonClient.get()){
+    if(bUseSyphonClient.get()){
 		syphonClient4ArenaFlow.draw(0, 0, drawWidth, drawHeight);
 		
-	}else{
-//		if (bFlipCamera.get()){
-//			simpleCam.draw(cameraFbo.getWidth(), 0, -cameraFbo.getWidth(), cameraFbo.getHeight());
-//			
-//		}  // Flip Horizontal
-//		else{
-//			simpleCam.draw(0, 0, cameraFbo.getWidth(), cameraFbo.getHeight());
-//			
-//		}
-		
-		
-	}
+    }else{
+        if (bFlipCamera.get()){
+            simpleCam.draw(cameraFbo.getWidth(), 0, -cameraFbo.getWidth(), cameraFbo.getHeight());
+            
+        }  // Flip Horizontal
+        else{
+            simpleCam.draw(0, 0, cameraFbo.getWidth(), cameraFbo.getHeight());
+            
+        }
+        
+        
+    }
 
 	flowFbo.end();
 	
@@ -139,7 +139,7 @@ void ofApp::update(){
 	ofEnableBlendMode(OF_BLENDMODE_DISABLED);
 	obsticleFbo.begin();
 	//obsticleImg.draw(0, 0);
-	syphonClient4ArenaObstacle.draw(0, 0, drawWidth, drawHeight);
+    syphonClient4ArenaObstacle.draw(0, 0, drawWidth, drawHeight);
 	obsticleFbo.end();
 	ofPopStyle();
 
@@ -177,22 +177,21 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 	
+    syphonFbo.begin();
+    ofClear(255, 255, 255);
 	
-	syphonFbo.begin();
-	ofClear(255, 255, 255);
 	
-	
-	syphonClient4ArenaBackground.draw(0, 0);
+//    syphonClient4ArenaBackground.draw(0, 0);
 	
 	for (int i = 0; i < vecMyFlowTools.size(); i++) {
 		vecMyFlowTools[i]->drawColorFlow();
 	}
 //	syphonClient4ArenaFront.draw(0, 0);
 	
-	syphonFbo.end();
+    syphonFbo.end();
 	
 	
-	syphonServer.publishTexture(&syphonFbo.getTexture());
+    syphonServer.publishTexture(&syphonFbo.getTexture());
 	
 //	syphonClient.draw(0, 0);
 	
